@@ -18,13 +18,105 @@
 
 #include <stdint.h>
 #include "FreeRTOS.h"
+#include "rcc.h"
+#include "gpio.h"
+#include "STM32F0Time.h"
+#include "FlashF051.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
+void Delay_ms(uint32_t ms) {
+    uint32_t i, j;
+    for (i = 0; i < ms; i++) {
+        for (j = 0; j < 8000; j++) {
+            //NOP();
+        }
+    }
+}
+
+static void Timer2_Callback(void) {
+    //timerTickCount++;
+    GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+    GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+}
+
+void timer_init(void)
+{
+    TimerConfig timer2Config = {
+        .timer = TIMER2,
+        .prescaler = (48000 - 1),      // 48 MHz / (4799 + 1) = 10 kHz timer clock
+        .autoReload = 999,     // 10 kHz / (9999 + 1) = 1 Hz update event
+        .updateInterrupt = true,
+        .irqPriority = 2,
+        .countMode = TIMER_MODE_UP,
+        .onePulseMode = false,
+        .autoReloadPreload = true
+    };
+
+    STM32F0Timer_SetUpdateCallback(TIMER2, Timer2_Callback);
+
+    if (!STM32F0Timer_Init(&timer2Config)) {
+        while (1);
+    }
+}
+
+void led_gpio_init(void) {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    /* Enable GPIOC clock for LED on PC8 */
+    GPIO_EnableClock(GPIOC);
+
+    /* Configure PC8 as output */
+    GPIO_InitStruct.Pin = GPIO_PIN_8;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT;
+    GPIO_InitStruct.Ot = GPIO_OTYPE_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Pull = GPIO_PULL_NO;
+    GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /* Configure PC8 as output */
+    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT;
+    GPIO_InitStruct.Ot = GPIO_OTYPE_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Pull = GPIO_PULL_NO;
+    GPIO_Init(GPIOC, &GPIO_InitStruct);
+}
+
+void SystemClock_Config_48MHz(void) {
+    RCC_Config config = {
+        .system_clock_source = CLOCK_SOURCE_PLL,
+        .target_frequency = SYSTEM_CLOCK_8MHZ,
+        .hse_enabled = true,
+        .pll_enabled = true,
+        .pll_source = PLL_SOURCE_HSE,
+        .pll_multiplier = 1,  // HSE 8MHz * 6 = 48MHz
+        .ahb_prescaler = AHB_PRESCALER_1,
+        .apb_prescaler = APB_PRESCALER_1,
+        .hsi48_enabled = false,
+        .css_enabled = true
+    };
+
+    RCC_Init(&config);
+
+    if(FLASH_ConfigureForFrequency(48000000) != FLASH_STATUS_OK)
+    {
+    	while(1);
+    }
+}
+
 int main(void)
 {
-    /* Loop forever */
-	for(;;);
+	SystemClock_Config_48MHz();
+	led_gpio_init();
+	timer_init();
+
+	STM32F0Timer_Start(TIMER2);
+    /* Main loop - toggle LED */
+    while (1) {
+
+        Delay_ms(100);
+    }
 }
