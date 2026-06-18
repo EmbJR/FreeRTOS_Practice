@@ -22,10 +22,17 @@
 #include "gpio.h"
 #include "STM32F0Time.h"
 #include "FlashF051.h"
+#include "task.h"
+#include "queue.h"
+
+
+volatile uint32_t timerTickCount = 0;
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
+
+void LedTask(void *pvParameters);
 
 void Delay_ms(uint32_t ms) {
     uint32_t i, j;
@@ -38,28 +45,21 @@ void Delay_ms(uint32_t ms) {
 
 static void Timer2_Callback(void) {
     //timerTickCount++;
-    GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-    GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+      /* Call tick handler */
+    	xPortSysTickHandler();
+    }
 }
 
 void timer_init(void)
 {
-    TimerConfig timer2Config = {
-        .timer = TIMER2,
-        .prescaler = (48000 - 1),      // 48 MHz / (4799 + 1) = 10 kHz timer clock
-        .autoReload = 999,     // 10 kHz / (9999 + 1) = 1 Hz update event
-        .updateInterrupt = true,
-        .irqPriority = 2,
-        .countMode = TIMER_MODE_UP,
-        .onePulseMode = false,
-        .autoReloadPreload = true
-    };
-
-    STM32F0Timer_SetUpdateCallback(TIMER2, Timer2_Callback);
-
-    if (!STM32F0Timer_Init(&timer2Config)) {
-        while (1);
-    }
+	uint32_t t2clk = STM32F0Timer_GetTimerClockHz(TIMER2);
+	if (!STM32F0Timer_ConfigurePeriodUs(TIMER2, t2clk, 1000U)) {
+	        while (1);
+	    }
+	STM32F0Timer_SetUpdateCallback(TIMER2, Timer2_Callback);
+	STM32F0Timer_EnableUpdateInterrupt(TIMER2, true);
+	STM32F0Timer_Start(TIMER2);
 }
 
 void led_gpio_init(void) {
@@ -88,11 +88,11 @@ void led_gpio_init(void) {
 void SystemClock_Config_48MHz(void) {
     RCC_Config config = {
         .system_clock_source = CLOCK_SOURCE_PLL,
-        .target_frequency = SYSTEM_CLOCK_8MHZ,
+        .target_frequency = SYSTEM_CLOCK_48MHZ,
         .hse_enabled = true,
         .pll_enabled = true,
         .pll_source = PLL_SOURCE_HSE,
-        .pll_multiplier = 1,  // HSE 8MHz * 6 = 48MHz
+        .pll_multiplier = 6,  // HSE 8MHz * 6 = 48MHz
         .ahb_prescaler = AHB_PRESCALER_1,
         .apb_prescaler = APB_PRESCALER_1,
         .hsi48_enabled = false,
@@ -107,16 +107,73 @@ void SystemClock_Config_48MHz(void) {
     }
 }
 
+void vPortSetupTimerInterrupt(void) {
+    // Intentionally left blank.
+    // We are using TIM6, not the SysTick.
+}
+
 int main(void)
 {
 	SystemClock_Config_48MHz();
 	led_gpio_init();
-	timer_init();
 
-	STM32F0Timer_Start(TIMER2);
+    timer_init();
+    STM32F0Timer_Stop(TIMER2);
+
+    xTaskCreate(
+        LedTask,
+        "LED",
+        128,
+        NULL,
+        tskIDLE_PRIORITY + 1,
+        NULL
+    );
+
+    STM32F0Timer_Start(TIMER2);
+
+    vTaskStartScheduler();
+
     /* Main loop - toggle LED */
     while (1) {
-
-        Delay_ms(100);
+    		//GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+            Delay_ms(1000);
     }
+}
+
+void LedTask(void *pvParameters)
+{
+    TickType_t xLastWakeTime;
+
+    /* Initialize xLastWakeTime with the current tick count */
+    xLastWakeTime = xTaskGetTickCount();
+
+    while (1)
+    {
+        /* Toggle PA5 */
+    	GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+
+        /* Wait until 100 ms from the previous wake time */
+        vTaskDelayUntil(
+            &xLastWakeTime,
+            pdMS_TO_TICKS(1000)
+        );
+
+    	//vTaskDelay(1000);
+    }
+}
+
+void vApplicationIdleHook(void) {
+    // This runs whenever no other task is ready to run
+    // Enter Sleep Mode
+    //__WFI(); 
+    		GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+            //Delay_ms(10);
+}
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    // Trigger a breakpoint or reset the system here
+    while (1) {
+		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+        Delay_ms(1000);
+}
 }

@@ -11,7 +11,7 @@
 
 /* RTOS behavioral settings */
 #define configUSE_PREEMPTION            1
-#define configUSE_IDLE_HOOK             0
+#define configUSE_IDLE_HOOK             1
 #define configUSE_TICK_HOOK             0
 #define configUSE_16_BIT_TICKS          0
 #define configIDLE_SHOULD_YIELD         1
@@ -19,12 +19,18 @@
 #define configUSE_RECURSIVE_MUTEXES     1
 #define configUSE_COUNTING_SEMAPHORES   1
 
+#define INCLUDE_xTaskDelayUntil         1
+#define INCLUDE_vTaskDelay              1
+#define INCLUDE_xTaskGetSchedulerState  1
+
+
+
 /* Memory Allocation */
 #define configSUPPORT_STATIC_ALLOCATION     0
 #define configSUPPORT_DYNAMIC_ALLOCATION    1
 
 /* Hook definitions */
-#define configCHECK_FOR_STACK_OVERFLOW  0
+#define configCHECK_FOR_STACK_OVERFLOW  2
 
 /* Cortex-M0 specific */
 #define __NVIC_PRIO_BITS                2  // STM32F0 uses 2 bits for priority

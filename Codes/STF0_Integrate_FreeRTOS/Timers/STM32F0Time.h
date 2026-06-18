@@ -99,6 +99,8 @@ bool STM32F0Timer_Init(const TimerConfig *config);
 bool STM32F0Timer_ConfigurePeriodUs(TimerId timer, uint32_t timerClockHz, uint32_t periodUs);
 void STM32F0Timer_SetPeriod(TimerId timer, uint32_t prescaler, uint32_t autoReload);
 void STM32F0Timer_SetUpdateCallback(TimerId timer, TimerCallback callback);
+// Returns the input clock (Hz) used by the timer peripheral (accounts APB prescaler behavior)
+uint32_t STM32F0Timer_GetTimerClockHz(TimerId timer);
 
 // Control
 void STM32F0Timer_Start(TimerId timer);
