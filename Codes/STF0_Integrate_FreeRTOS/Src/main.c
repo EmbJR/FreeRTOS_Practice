@@ -22,8 +22,10 @@
 #include "gpio.h"
 #include "STM32F0Time.h"
 #include "FlashF051.h"
+#include "uartF051.h"
 #include "task.h"
 #include "queue.h"
+
 
 
 volatile uint32_t timerTickCount = 0;
@@ -128,6 +130,8 @@ int main(void)
         tskIDLE_PRIORITY + 1,
         NULL
     );
+
+    UART_App_Init();
 
     STM32F0Timer_Start(TIMER2);
 
