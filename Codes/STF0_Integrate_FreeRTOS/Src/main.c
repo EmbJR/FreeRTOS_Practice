@@ -127,7 +127,7 @@ int main(void)
         "LED",
         128,
         NULL,
-        tskIDLE_PRIORITY + 1,
+        tskIDLE_PRIORITY + 2,
         NULL
     );
 
@@ -148,6 +148,10 @@ void LedTask(void *pvParameters)
 {
     TickType_t xLastWakeTime;
 
+    while(xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
+      /* Call tick handler */
+    }
+
     /* Initialize xLastWakeTime with the current tick count */
     xLastWakeTime = xTaskGetTickCount();
 
@@ -157,12 +161,12 @@ void LedTask(void *pvParameters)
     	GPIO_TogglePin(GPIOC, GPIO_PIN_9);
 
         /* Wait until 100 ms from the previous wake time */
-        vTaskDelayUntil(
-            &xLastWakeTime,
-            pdMS_TO_TICKS(1000)
-        );
+//        vTaskDelayUntil(
+//            &xLastWakeTime,
+//            pdMS_TO_TICKS(100)
+//        );
 
-    	//vTaskDelay(1000);
+    	vTaskDelay(100);
     }
 }
 

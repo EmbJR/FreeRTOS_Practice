@@ -34,7 +34,7 @@
 #define NVIC_BASE_ADDR     0xE000E100UL
 #define NVIC_ISER          (*(volatile uint32_t *)(NVIC_BASE_ADDR))
 #define NVIC_ICER          (*(volatile uint32_t *)(NVIC_BASE_ADDR + 0x80))
-#define NVIC_IPR           (*(volatile uint32_t *)(NVIC_BASE_ADDR + 0x300))
+#define NVIC_IPR        ((volatile uint8_t *)(0xE000E400UL))
 
 /*============================================================================
  * Private Variables
@@ -78,6 +78,18 @@ static void NVIC_DisableUARTInterrupt(uint8_t irq) {
     if (irq < 32) {
         NVIC_ICER = (1 << irq);
     }
+}
+
+/**
+ * @brief  Set interrupt priority.
+ * @param  IRQn: interrupt number
+ * @param  Priority: priority value (0-3 for STM32F0xx)
+ */
+static void NVIC_SetPriority(uint8_t IRQn, uint32_t Priority) {
+    uint8_t reg_index = IRQn >> 2;
+    uint8_t shift = (IRQn & 0x03) * 8;
+    NVIC_IPR[reg_index] &= ~(0xFF << shift);
+    NVIC_IPR[reg_index] |= (Priority << (shift + 6));  /* Bits 6-7 for priority */
 }
 
 /*============================================================================
@@ -335,9 +347,13 @@ void UART_DisableRxTxInterrupts(USART_TypeDef *USARTx) {
 void UART_App(void *pvParameters)
 {
 	 /* Main loop */
+
+    while(xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
+      /* Call tick handler */
+    }
 	while (1) {
 		/* Process received data */
-		while (UART_Available() > 0) {
+		if (UART_Available() > 0) {
 			uint8_t ch;
 
 			/* Get received character */
@@ -386,6 +402,8 @@ void UART_App_Init(void){
     /* Enable USART1 interrupt in NVIC */
     NVIC_EnableUARTInterrupt(UART1_IRQno);
 
+    NVIC_SetPriority(UART1_IRQno, 3);
+
     /* Queue transmission data to buffer using batch write API */
     for (i = 0; i < sizeof(txData) - 1; i++) {
         circular_buffer_write(txBuffer, (char)txData[i]);
@@ -398,7 +416,7 @@ void UART_App_Init(void){
     xTaskCreate(
     	UART_App,
         "UART_App",
-        128,
+        512,
         NULL,
         tskIDLE_PRIORITY + 1,
         NULL
