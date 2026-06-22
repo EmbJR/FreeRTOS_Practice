@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "CirBuffer.h"
+#include "FreeRTOS.h"
 
 
 /**
@@ -22,12 +23,12 @@ CircularBuffer* circular_buffer_create(size_t capacity) {
         return NULL;
     }
     
-    CircularBuffer *cb = (CircularBuffer*)malloc(sizeof(CircularBuffer));
+    CircularBuffer *cb = (CircularBuffer*)pvPortMalloc(sizeof(CircularBuffer));
     if (cb == NULL) {
         return NULL;
     }
     
-    cb->buffer = (char*)malloc(capacity * sizeof(char));
+    cb->buffer = (char*)pvPortMalloc(capacity * sizeof(char));
     if (cb->buffer == NULL) {
         free(cb);
         return NULL;

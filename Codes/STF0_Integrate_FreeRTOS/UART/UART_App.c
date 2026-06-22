@@ -12,21 +12,18 @@
 /*============================================================================
  * Includes
  *============================================================================*/
+#include "main.h"
 #include "uartF051.h"
 #include "CirBuffer.h"
 #include "rcc.h"
-#include <stdint.h>
-#include <stdbool.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
+
 
 /*============================================================================
  * Macros
  *============================================================================*/
 #define USART_BAUD_RATE    115200UL
-#define TX_BUFFER_SIZE     256
-#define RX_BUFFER_SIZE     256
+#define TX_BUFFER_SIZE     250
+#define RX_BUFFER_SIZE     200
 
 /*============================================================================
  * NVIC Definitions (STM32F051)
@@ -348,9 +345,8 @@ void UART_App(void *pvParameters)
 {
 	 /* Main loop */
 
-    while(xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
-      /* Call tick handler */
-    }
+	while(systemInitialized == false);
+
 	while (1) {
 		/* Process received data */
 		if (UART_Available() > 0) {
@@ -376,7 +372,10 @@ void UART_App(void *pvParameters)
 			/* Handle error - clear and continue */
 			UART_ClearError(USART1);
 		}
-		vTaskDelay(100);
+		for(int i = 0; i<50000; i++)
+			for(int j = 0; j<500; j++);
+
+		vTaskDelay(pdMS_TO_TICKS(200));
 	}
 
 	/* Cleanup buffers (never reached in infinite loop) */
@@ -416,9 +415,9 @@ void UART_App_Init(void){
     xTaskCreate(
     	UART_App,
         "UART_App",
-        512,
+        128,
         NULL,
-        tskIDLE_PRIORITY + 1,
-        NULL
+        tskIDLE_PRIORITY + 2,
+        &uartTaskHandle
     );
 }

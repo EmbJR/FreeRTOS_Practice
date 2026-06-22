@@ -348,6 +348,8 @@ void UART_EnableFIFO(USART_TypeDef *USARTx);
 void UART_DisableFIFO(USART_TypeDef *USARTx);
 void UART_App_Init(void);
 
+bool UART_SendStringIT(USART_TypeDef *USARTx, const char *str);
+
 /*============================================================================
  * DMA Request Definitions for UART
  *============================================================================*/

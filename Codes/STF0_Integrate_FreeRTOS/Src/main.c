@@ -16,25 +16,28 @@
  ******************************************************************************
  */
 
-#include <stdint.h>
-#include "FreeRTOS.h"
 #include "rcc.h"
 #include "gpio.h"
 #include "STM32F0Time.h"
 #include "FlashF051.h"
 #include "uartF051.h"
-#include "task.h"
-#include "queue.h"
+#include "main.h"
 
-
+TaskHandle_t ledTaskHandle;
+TaskHandle_t monitoringTaskHandle;
+TaskHandle_t uartTaskHandle;
 
 volatile uint32_t timerTickCount = 0;
+volatile bool systemInitialized = true;
+volatile uint32_t ulHighFrequencyTimerTicks = 0;
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
 void LedTask(void *pvParameters);
+void Monitoring_Task(void *parameter);
+void ConfigureTimerForRunTimeStats(void);
 
 void Delay_ms(uint32_t ms) {
     uint32_t i, j;
@@ -53,6 +56,11 @@ static void Timer2_Callback(void) {
     }
 }
 
+static void TIMER16_Callback(void) {
+    ulHighFrequencyTimerTicks++;
+
+}
+
 void timer_init(void)
 {
 	uint32_t t2clk = STM32F0Timer_GetTimerClockHz(TIMER2);
@@ -62,6 +70,9 @@ void timer_init(void)
 	STM32F0Timer_SetUpdateCallback(TIMER2, Timer2_Callback);
 	STM32F0Timer_EnableUpdateInterrupt(TIMER2, true);
 	STM32F0Timer_Start(TIMER2);
+
+    //---- This timer is for debugging of FreeRTOS for Task States ------//
+    ConfigureTimerForRunTimeStats();
 }
 
 void led_gpio_init(void) {
@@ -128,7 +139,17 @@ int main(void)
         128,
         NULL,
         tskIDLE_PRIORITY + 2,
-        NULL
+        &ledTaskHandle
+    );
+
+
+    xTaskCreate(
+    	Monitoring_Task,
+        "Monitor_Task",
+        512,
+        NULL,
+        tskIDLE_PRIORITY + 2,
+        &monitoringTaskHandle
     );
 
     UART_App_Init();
@@ -140,17 +161,72 @@ int main(void)
     /* Main loop - toggle LED */
     while (1) {
     		//GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-            Delay_ms(1000);
+            Delay_ms(pdMS_TO_TICKS(100));
     }
 }
 
+
+static inline char* TaskStateDecode(uint8_t state)
+{
+	if(state==0)
+		return "eRunning";
+	else if(state==1)
+		return "eReady";
+	else if(state==2)
+		return "eBlocked";
+	else if(state==3)
+		return "eSuspended";
+	else if(state==4)
+		return "eDeleted";
+	else if(state==5)
+		return "eInvalid";
+	else
+		return "undefined";
+}
+
+volatile uint8_t prtStr[200] = {0};
+void Monitoring_Task(void *parameter)
+{
+
+	TaskStatus_t TaskStatusArray[10];
+	uint32_t TotalRunTime;
+
+    while(xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
+    }
+    systemInitialized = true;
+
+	while(1)
+	{
+#if 1
+		UBaseType_t TaskCount = uxTaskGetSystemState(TaskStatusArray,
+																  10,
+													   &TotalRunTime);
+		UART_SendStringIT(USART1, (const char *)"\r\n---------------------Task State---------------------");
+		memset((char *)prtStr, 0x00, sizeof(prtStr));
+		for(uint8_t i = 0; i < TaskCount; i++)
+		{
+			sprintf((char *)prtStr, "\r\n\
+							 Task Name:- %s\n\
+							 State:- %s\n\
+							 Stack High Mark:- %d\n\
+							 CPU Usage(%) = %d\n", TaskStatusArray[i].pcTaskName,
+							 TaskStateDecode(TaskStatusArray[i].eCurrentState),
+							 (unsigned int)TaskStatusArray[i].usStackHighWaterMark,
+							 (unsigned int)(TaskStatusArray[i].ulRunTimeCounter * 100)/TotalRunTime);
+			UART_SendStringIT(USART1, (const char *)prtStr);
+			vTaskDelay(pdMS_TO_TICKS(500));
+		}
+#endif
+		vTaskDelay(pdMS_TO_TICKS(500));
+        GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+	}
+}
+#if 1
 void LedTask(void *pvParameters)
 {
     TickType_t xLastWakeTime;
 
-    while(xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
-      /* Call tick handler */
-    }
+    while(systemInitialized == false);
 
     /* Initialize xLastWakeTime with the current tick count */
     xLastWakeTime = xTaskGetTickCount();
@@ -161,20 +237,20 @@ void LedTask(void *pvParameters)
     	GPIO_TogglePin(GPIOC, GPIO_PIN_9);
 
         /* Wait until 100 ms from the previous wake time */
-//        vTaskDelayUntil(
-//            &xLastWakeTime,
-//            pdMS_TO_TICKS(100)
-//        );
+        vTaskDelayUntil(
+            &xLastWakeTime,
+            pdMS_TO_TICKS(pdMS_TO_TICKS(500))
+        );
 
-    	vTaskDelay(100);
+    	//vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
-
+#endif
 void vApplicationIdleHook(void) {
     // This runs whenever no other task is ready to run
     // Enter Sleep Mode
     //__WFI(); 
-    		GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+    		//GPIO_TogglePin(GPIOC, GPIO_PIN_8);
             //Delay_ms(10);
 }
 
@@ -182,6 +258,26 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
     // Trigger a breakpoint or reset the system here
     while (1) {
 		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
-        Delay_ms(1000);
+			Delay_ms(1000);
+	}
 }
+
+void vApplicationMallocFailedHook(void)
+{
+    while(1)
+    {
+        /* Memory exhausted */
+    	Delay_ms(1000);
+    }
+}
+
+void ConfigureTimerForRunTimeStats(void)
+{
+   	uint32_t t2clk = STM32F0Timer_GetTimerClockHz(TIMER16);
+	if (!STM32F0Timer_ConfigurePeriodUs(TIMER16, t2clk, 10U)) {
+	        while (1);
+	    }
+	STM32F0Timer_SetUpdateCallback(TIMER16, TIMER16_Callback);
+	STM32F0Timer_EnableUpdateInterrupt(TIMER16, true);
+	STM32F0Timer_Start(TIMER16);
 }
