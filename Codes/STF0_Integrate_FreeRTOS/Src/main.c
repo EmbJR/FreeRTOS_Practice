@@ -27,9 +27,14 @@ TaskHandle_t ledTaskHandle;
 TaskHandle_t monitoringTaskHandle;
 TaskHandle_t uartTaskHandle;
 
+TimerHandle_t tmr_1sec;
+
 volatile uint32_t timerTickCount = 0;
 volatile bool systemInitialized = true;
 volatile uint32_t ulHighFrequencyTimerTicks = 0;
+
+volatile uint32_t IdleCounter = 0;
+volatile uint8_t CPU_Usage = 0;
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -124,6 +129,18 @@ void vPortSetupTimerInterrupt(void) {
     // Intentionally left blank.
     // We are using TIM6, not the SysTick.
 }
+#define MAX_IDLE_COUNT 614491u
+void tmr1secCallBack(TimerHandle_t xTimer)
+{
+	if(xTimer == tmr_1sec)
+	{
+		if(IdleCounter < MAX_IDLE_COUNT)
+		{
+			CPU_Usage = 100 - ((IdleCounter * 100) / MAX_IDLE_COUNT);
+		}
+		IdleCounter = 0;
+	}
+}
 
 int main(void)
 {
@@ -146,7 +163,7 @@ int main(void)
     xTaskCreate(
     	Monitoring_Task,
         "Monitor_Task",
-        512,
+        128,
         NULL,
         tskIDLE_PRIORITY + 2,
         &monitoringTaskHandle
@@ -154,6 +171,13 @@ int main(void)
 
     UART_App_Init();
 
+    tmr_1sec = xTimerCreate("1Sec_Timer",
+    						pdMS_TO_TICKS(1000),
+							pdTRUE,
+							NULL,
+							tmr1secCallBack);
+
+    xTimerStart(tmr_1sec, 0);
     STM32F0Timer_Start(TIMER2);
 
     vTaskStartScheduler();
@@ -197,7 +221,10 @@ void Monitoring_Task(void *parameter)
 
 	while(1)
 	{
-#if 1
+		memset((char *)prtStr, 0x00, sizeof(prtStr));
+		sprintf((char *)prtStr, "Idle Usage(Pers)= %d\r\n", (unsigned int)CPU_Usage);
+		UART_SendStringIT(USART1, (const char *)prtStr);
+#if 0
 		UBaseType_t TaskCount = uxTaskGetSystemState(TaskStatusArray,
 																  10,
 													   &TotalRunTime);
@@ -212,7 +239,7 @@ void Monitoring_Task(void *parameter)
 							 CPU Usage(%) = %d\n", TaskStatusArray[i].pcTaskName,
 							 TaskStateDecode(TaskStatusArray[i].eCurrentState),
 							 (unsigned int)TaskStatusArray[i].usStackHighWaterMark,
-							 (unsigned int)(TaskStatusArray[i].ulRunTimeCounter * 100)/TotalRunTime);
+							 CPU_Usage);//(unsigned int)(TaskStatusArray[i].ulRunTimeCounter * 100)/TotalRunTime);
 			UART_SendStringIT(USART1, (const char *)prtStr);
 			vTaskDelay(pdMS_TO_TICKS(500));
 		}
@@ -237,12 +264,13 @@ void LedTask(void *pvParameters)
     	GPIO_TogglePin(GPIOC, GPIO_PIN_9);
 
         /* Wait until 100 ms from the previous wake time */
-        vTaskDelayUntil(
-            &xLastWakeTime,
-            pdMS_TO_TICKS(pdMS_TO_TICKS(500))
-        );
-
-    	//vTaskDelay(pdMS_TO_TICKS(500));
+//        vTaskDelayUntil(
+//            &xLastWakeTime,
+//            pdMS_TO_TICKS(pdMS_TO_TICKS(500))
+//        );
+		for(int i = 0; i<500000; i++)
+			for(int j = 0; j<5000; j++);
+    	vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 #endif
@@ -252,6 +280,7 @@ void vApplicationIdleHook(void) {
     //__WFI(); 
     		//GPIO_TogglePin(GPIOC, GPIO_PIN_8);
             //Delay_ms(10);
+	IdleCounter++;
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {

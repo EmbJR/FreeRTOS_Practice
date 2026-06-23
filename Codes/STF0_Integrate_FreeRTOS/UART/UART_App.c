@@ -23,7 +23,7 @@
  *============================================================================*/
 #define USART_BAUD_RATE    115200UL
 #define TX_BUFFER_SIZE     250
-#define RX_BUFFER_SIZE     200
+#define RX_BUFFER_SIZE     20
 
 /*============================================================================
  * NVIC Definitions (STM32F051)

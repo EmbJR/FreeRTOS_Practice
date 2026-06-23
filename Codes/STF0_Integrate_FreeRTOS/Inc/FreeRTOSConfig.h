@@ -25,9 +25,15 @@ extern volatile uint32_t ulHighFrequencyTimerTicks;
 #define configUSE_RECURSIVE_MUTEXES     1
 #define configUSE_COUNTING_SEMAPHORES   1
 
-#define INCLUDE_xTaskDelayUntil         1
+//#define INCLUDE_xTaskDelayUntil         1
 #define INCLUDE_vTaskDelay              1
 #define INCLUDE_xTaskGetSchedulerState  1
+//-------------- Timer enable ---------------------//
+#define configUSE_TIMERS                 1
+#define configTIMER_TASK_PRIORITY        (configMAX_PRIORITIES - 1)
+#define configTIMER_QUEUE_LENGTH         5
+#define configTIMER_TASK_STACK_DEPTH     128
+//------------------------------------------------//
 
 /* Memory Allocation */
 #define configSUPPORT_STATIC_ALLOCATION     0
@@ -40,9 +46,9 @@ extern volatile uint32_t ulHighFrequencyTimerTicks;
 
 //--------------- for debugging -----------------//
 //-------- for task statistics start ----------//
-#define configGENERATE_RUN_TIME_STATS 	1
-#define configUSE_TRACE_FACILITY      	1
-#define configUSE_STATS_FORMATTING_FUNCTIONS     1
+//#define configGENERATE_RUN_TIME_STATS 	1
+//#define configUSE_TRACE_FACILITY      	1
+//#define configUSE_STATS_FORMATTING_FUNCTIONS     1
 
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ConfigureTimerForRunTimeStats()
 
