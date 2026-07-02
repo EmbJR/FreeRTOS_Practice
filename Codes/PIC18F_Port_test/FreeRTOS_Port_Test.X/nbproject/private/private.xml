@@ -4,10 +4,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/New/FreeRTOS/Git/FreeRTOS_Practice/Codes/PIC18F_Port_test/FreeRTOS_Port_Test.X/newmain.c</file>
-            <file>file:/E:/New/FreeRTOS/Git/FreeRTOS_Practice/Codes/PIC18F_Port_test/FreeRTOS_Port_Test.X/FreeRTOS-Kernel/include/portable.h</file>
-            <file>file:/E:/New/FreeRTOS/Git/FreeRTOS_Practice/Codes/PIC18F_Port_test/FreeRTOS_Port_Test.X/FreeRTOS-Kernel/include/FreeRTOS.h</file>
-            <file>file:/E:/New/FreeRTOS/Git/FreeRTOS_Practice/Codes/PIC18F_Port_test/FreeRTOS_Port_Test.X/FreeRTOS-Kernel/tasks.c</file>
-            <file>file:/E:/New/FreeRTOS/Git/FreeRTOS_Practice/Codes/PIC18F_Port_test/FreeRTOS_Port_Test.X/FreeRTOS-Kernel/portable/WizC/PIC18/portmacro.h</file>
+            <file>file:/E:/New/FreeRTOS/Git/FreeRTOS_Practice/Codes/PIC18F_Port_test/FreeRTOS_Port_Test.X/FreeRTOS-Kernel/portable/MPLAB/PIC18F/port.c</file>
         </group>
     </open-files>
 </project-private>

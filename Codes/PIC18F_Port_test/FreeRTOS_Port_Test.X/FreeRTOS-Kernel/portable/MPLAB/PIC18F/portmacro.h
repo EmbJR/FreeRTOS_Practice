@@ -29,6 +29,8 @@
 #ifndef PORTMACRO_H
 #define PORTMACRO_H
 
+#include <xc.h>
+
 /*-----------------------------------------------------------
  * Port specific definitions.
  *
@@ -82,9 +84,7 @@ typedef unsigned char UBaseType_t;
 if they were saved as being enabled.  Don't modify any other bits
 within the INTCON register as these may have legitimately have been
 modified within the critical region. */
-#define portEXIT_CRITICAL()         _asm                                    \
-                                        MOVF    POSTDEC1, 1, 0              \
-                                    _endasm                                 \
+#define portEXIT_CRITICAL()         asm( "movf POSTDEC1, 1, 0" );   \
                                     if( INDF1 & portGLOBAL_INT_ENABLE_BIT ) \
                                     {                                       \
                                         portENABLE_INTERRUPTS();            \
@@ -107,8 +107,6 @@ extern void vPortYield( void );
 #endif
 
 
-#define portNOP()               _asm    \
-                                    NOP \
-                                _endasm
+#define portNOP()               asm( "nop" );
 
 #endif /* PORTMACRO_H */

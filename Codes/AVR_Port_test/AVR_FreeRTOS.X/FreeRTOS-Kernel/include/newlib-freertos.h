@@ -26,54 +26,37 @@
  *
  */
 
-/*
-Changes from V3.0.0
-    + ISRcode pulled inline to reduce stack-usage.
+#ifndef INC_NEWLIB_FREERTOS_H
+#define INC_NEWLIB_FREERTOS_H
 
-    + Added functionality to only call vTaskSwitchContext() once
-      when handling multiple interruptsources in a single interruptcall.
+/* Note Newlib support has been included by popular demand, but is not
+ * used by the FreeRTOS maintainers themselves.  FreeRTOS is not
+ * responsible for resulting newlib operation.  User must be familiar with
+ * newlib and must provide system-wide implementations of the necessary
+ * stubs. Be warned that (at the time of writing) the current newlib design
+ * implements a system-wide malloc() that must be provided with locks.
+ *
+ * See the third party link http://www.nadler.com/embedded/newlibAndFreeRTOS.html
+ * for additional information. */
 
-    + Filename changed to a .c extension to allow stepping through code
-      using F7.
+#include <reent.h>
 
-Changes from V3.0.1
-*/
+#define configUSE_C_RUNTIME_TLS_SUPPORT    1
 
-/*
- * ISR for the tick.
- * This increments the tick count and, if using the preemptive scheduler,
- * performs a context switch.  This must be identical to the manual
- * context switch in how it stores the context of a task.
- */
+#ifndef configTLS_BLOCK_TYPE
+    #define configTLS_BLOCK_TYPE           struct _reent
+#endif
 
-#ifndef _FREERTOS_DRIVERS_TICK_ISRTICK_C
-#define _FREERTOS_DRIVERS_TICK_ISRTICK_C
+#ifndef configINIT_TLS_BLOCK
+    #define configINIT_TLS_BLOCK( xTLSBlock, pxTopOfStack )    _REENT_INIT_PTR( &( xTLSBlock ) )
+#endif
 
-{
-    /*
-     * Was the interrupt the SystemClock?
-     */
-    if( bCCP1IF && bCCP1IE )
-    {
-        /*
-         * Reset the interrupt flag
-         */
-        bCCP1IF = 0;
+#ifndef configSET_TLS_BLOCK
+    #define configSET_TLS_BLOCK( xTLSBlock )    ( _impure_ptr = &( xTLSBlock ) )
+#endif
 
-        /*
-         * Maintain the tick count.
-         */
-        if( xTaskIncrementTick() != pdFALSE )
-        {
-            /*
-             * Ask for a switch to the highest priority task
-             * that is ready to run.
-             */
-            uxSwitchRequested = pdTRUE;
-        }
-    }
-}
+#ifndef configDEINIT_TLS_BLOCK
+    #define configDEINIT_TLS_BLOCK( xTLSBlock )    _reclaim_reent( &( xTLSBlock ) )
+#endif
 
-#pragma wizcpp uselib     "$__PATHNAME__/Tick.c"
-
-#endif  /* _FREERTOS_DRIVERS_TICK_ISRTICK_C */
+#endif /* INC_NEWLIB_FREERTOS_H */

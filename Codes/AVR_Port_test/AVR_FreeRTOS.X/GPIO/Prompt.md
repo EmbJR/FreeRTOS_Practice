@@ -1,0 +1,3 @@
+@Documents/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf  Please go through the document attached and develop the bare metal GPIO driver for the Atmega2560 controller considering the AVR GCC used with Microchip MPLAB X IDE.
+- The driver code should support the Interrupt handling also.
+- Generate the gpiom2560.c and gpiom2560.h files in "/Bare_Metal_Drivers/GPIO" folder and also generate the example codes with and without interrupts in "/Bare_Metal_Drivers/GPIO/Examples" files.

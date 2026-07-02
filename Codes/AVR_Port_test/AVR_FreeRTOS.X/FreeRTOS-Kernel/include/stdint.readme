@@ -26,29 +26,33 @@
  *
  */
 
-/*
-Changes from V3.0.0
+#ifndef FREERTOS_STDINT
+#define FREERTOS_STDINT
 
-Changes from V3.0.1
-
-Changes from V4.0.1
-    Uselib pragma added for Croutine.c
-*/
-
-/*
- * The installation script will automatically prepend this file to the default FreeRTOS.h.
+/*******************************************************************************
+ * THIS IS NOT A FULL stdint.h IMPLEMENTATION - It only contains the definitions
+ * necessary to build the FreeRTOS code.  It is provided to allow FreeRTOS to be
+ * built using compilers that do not provide their own stdint.h definition.
+ *
+ * To use this file:
+ *
+ *    1) Copy this file into the directory that contains your FreeRTOSConfig.h
+ *       header file, as that directory will already be in the compiler's include
+ *       path.
+ *
+ *    2) Rename the copied file stdint.h.
+ *
  */
 
-#ifndef WIZC_FREERTOS_H
-#define WIZC_FREERTOS_H
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
+typedef short int16_t;
+typedef unsigned short uint16_t;
+typedef long int32_t;
+typedef unsigned long uint32_t;
 
-#pragma noheap
-#pragma wizcpp expandnl   on
-#pragma wizcpp searchpath "$__PATHNAME__/libFreeRTOS/Include/"
-#pragma wizcpp uselib     "$__PATHNAME__/libFreeRTOS/Modules/Croutine.c"
-#pragma wizcpp uselib     "$__PATHNAME__/libFreeRTOS/Modules/Tasks.c"
-#pragma wizcpp uselib     "$__PATHNAME__/libFreeRTOS/Modules/Queue.c"
-#pragma wizcpp uselib     "$__PATHNAME__/libFreeRTOS/Modules/List.c"
-#pragma wizcpp uselib     "$__PATHNAME__/libFreeRTOS/Modules/Port.c"
+#ifndef SIZE_MAX
+    #define SIZE_MAX    ( ( size_t ) -1 )
+#endif
 
-#endif  /* WIZC_FREERTOS_H */
+#endif /* FREERTOS_STDINT */

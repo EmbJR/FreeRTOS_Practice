@@ -1,0 +1,1004 @@
+Archive member included to satisfy reference by file (symbol)
+
+C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+                              build/default/production/_ext/346853003/heap_4.o (__umulhisi3)
+C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+                              C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o (exit)
+C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+                              build/default/production/_ext/686616193/gpiom2560.o (__do_copy_data)
+C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+                              build/default/production/_ext/686616193/gpiom2560.o (__do_clear_bss)
+C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
+                              build/default/production/_ext/739144360/queue.o (memcpy)
+C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memset.o)
+                              build/default/production/_ext/346853003/heap_4.o (memset)
+
+Discarded input sections
+
+ .data          0x00000000        0x0 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+ .bss           0x00000000        0x0 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+ .text          0x00000000        0x0 build/default/production/_ext/686616193/gpiom2560.o
+ .data          0x00000000        0x0 build/default/production/_ext/686616193/gpiom2560.o
+ .bss           0x00000000        0x0 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_SetDirection
+                0x00000000       0x36 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_Write
+                0x00000000       0x36 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_SetPins
+                0x00000000       0x28 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ClearPins
+                0x00000000       0x2a build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ReadPins
+                0x00000000       0x2c build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ReadPort
+                0x00000000       0x22 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_EnablePullup
+                0x00000000       0x46 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_DisablePullup
+                0x00000000       0x2a build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_AtomicWrite
+                0x00000000        0xc build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_GlobalInterruptEnable
+                0x00000000        0x4 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_GlobalInterruptDisable
+                0x00000000        0x4 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ExtIntConfigure
+                0x00000000       0x82 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ExtIntEnable
+                0x00000000       0x16 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ExtIntDisable
+                0x00000000       0x18 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_ExtIntClearFlag
+                0x00000000       0x12 build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_PcintConfigure
+                0x00000000       0x3c build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_PcintEnable
+                0x00000000       0x1a build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_PcintDisable
+                0x00000000       0x1c build/default/production/_ext/686616193/gpiom2560.o
+ .text.GPIO_PcintClearFlag
+                0x00000000       0x12 build/default/production/_ext/686616193/gpiom2560.o
+ .text.PCINT3_vect
+                0x00000000       0x60 build/default/production/_ext/686616193/gpiom2560.o
+ .rodata.CSWTCH.10
+                0x00000000        0x8 build/default/production/_ext/686616193/gpiom2560.o
+ .rodata.CSWTCH.7
+                0x00000000       0x16 build/default/production/_ext/686616193/gpiom2560.o
+ .text          0x00000000        0x0 build/default/production/_ext/508962574/port.o
+ .data          0x00000000        0x0 build/default/production/_ext/508962574/port.o
+ .bss           0x00000000        0x0 build/default/production/_ext/508962574/port.o
+ .text.vPortEndScheduler
+                0x00000000        0x2 build/default/production/_ext/508962574/port.o
+ .text.hot.vPortYieldFromISR
+                0x00000000       0xc2 build/default/production/_ext/508962574/port.o
+ .text          0x00000000        0x0 build/default/production/_ext/346853003/heap_4.o
+ .data          0x00000000        0x0 build/default/production/_ext/346853003/heap_4.o
+ .bss           0x00000000        0x0 build/default/production/_ext/346853003/heap_4.o
+ .text.xPortGetFreeHeapSize
+                0x00000000        0xa build/default/production/_ext/346853003/heap_4.o
+ .text.xPortGetMinimumEverFreeHeapSize
+                0x00000000        0xa build/default/production/_ext/346853003/heap_4.o
+ .text.vPortInitialiseBlocks
+                0x00000000        0x2 build/default/production/_ext/346853003/heap_4.o
+ .text.pvPortCalloc
+                0x00000000       0x66 build/default/production/_ext/346853003/heap_4.o
+ .text.vPortGetHeapStats
+                0x00000000       0xc8 build/default/production/_ext/346853003/heap_4.o
+ .text.vPortHeapResetState
+                0x00000000       0x2a build/default/production/_ext/346853003/heap_4.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/croutine.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/croutine.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/croutine.o
+ .comment       0x00000000       0x30 build/default/production/_ext/739144360/croutine.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/event_groups.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/event_groups.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/event_groups.o
+ .text.xEventGroupCreate
+                0x00000000       0x2a build/default/production/_ext/739144360/event_groups.o
+ .text.xEventGroupWaitBits
+                0x00000000      0x18a build/default/production/_ext/739144360/event_groups.o
+ .text.xEventGroupClearBits
+                0x00000000       0x32 build/default/production/_ext/739144360/event_groups.o
+ .text.xEventGroupGetBitsFromISR
+                0x00000000        0xc build/default/production/_ext/739144360/event_groups.o
+ .text.xEventGroupSetBits
+                0x00000000      0x154 build/default/production/_ext/739144360/event_groups.o
+ .text.xEventGroupSync
+                0x00000000      0x186 build/default/production/_ext/739144360/event_groups.o
+ .text.vEventGroupDelete
+                0x00000000       0x34 build/default/production/_ext/739144360/event_groups.o
+ .text.vEventGroupSetBitsCallback
+                0x00000000        0x4 build/default/production/_ext/739144360/event_groups.o
+ .text.vEventGroupClearBitsCallback
+                0x00000000       0x32 build/default/production/_ext/739144360/event_groups.o
+ .comment       0x00000000       0x30 build/default/production/_ext/739144360/event_groups.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/list.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/list.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/list.o
+ .text.vListInsertEnd
+                0x00000000       0x3e build/default/production/_ext/739144360/list.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/queue.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/queue.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/queue.o
+ .text.prvUnlockQueue
+                0x00000000       0x96 build/default/production/_ext/739144360/queue.o
+ .text.xQueueGenericReset
+                0x00000000       0x90 build/default/production/_ext/739144360/queue.o
+ .text.xQueueGenericCreate
+                0x00000000       0xc6 build/default/production/_ext/739144360/queue.o
+ .text.xQueueGenericSend
+                0x00000000      0x23a build/default/production/_ext/739144360/queue.o
+ .text.xQueueCreateMutex
+                0x00000000       0x96 build/default/production/_ext/739144360/queue.o
+ .text.xQueueGenericSendFromISR
+                0x00000000      0x15a build/default/production/_ext/739144360/queue.o
+ .text.xQueueGiveFromISR
+                0x00000000       0x98 build/default/production/_ext/739144360/queue.o
+ .text.xQueueReceive
+                0x00000000      0x188 build/default/production/_ext/739144360/queue.o
+ .text.xQueueSemaphoreTake
+                0x00000000      0x1cc build/default/production/_ext/739144360/queue.o
+ .text.xQueuePeek
+                0x00000000      0x196 build/default/production/_ext/739144360/queue.o
+ .text.xQueueReceiveFromISR
+                0x00000000       0xbe build/default/production/_ext/739144360/queue.o
+ .text.xQueuePeekFromISR
+                0x00000000       0x7e build/default/production/_ext/739144360/queue.o
+ .text.uxQueueMessagesWaiting
+                0x00000000       0x10 build/default/production/_ext/739144360/queue.o
+ .text.uxQueueSpacesAvailable
+                0x00000000       0x14 build/default/production/_ext/739144360/queue.o
+ .text.uxQueueMessagesWaitingFromISR
+                0x00000000        0x6 build/default/production/_ext/739144360/queue.o
+ .text.vQueueDelete
+                0x00000000        0x4 build/default/production/_ext/739144360/queue.o
+ .text.uxQueueGetQueueItemSize
+                0x00000000        0x6 build/default/production/_ext/739144360/queue.o
+ .text.uxQueueGetQueueLength
+                0x00000000        0x6 build/default/production/_ext/739144360/queue.o
+ .text.xQueueIsQueueEmptyFromISR
+                0x00000000        0xc build/default/production/_ext/739144360/queue.o
+ .text.xQueueIsQueueFullFromISR
+                0x00000000        0xe build/default/production/_ext/739144360/queue.o
+ .comment       0x00000000       0x30 build/default/production/_ext/739144360/queue.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/stream_buffer.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/stream_buffer.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferGenericCreate
+                0x00000000       0x8c build/default/production/_ext/739144360/stream_buffer.o
+ .text.vStreamBufferDelete
+                0x00000000       0x14 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferReset
+                0x00000000       0x4a build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferResetFromISR
+                0x00000000       0x40 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferSetTriggerLevel
+                0x00000000       0x22 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferSpacesAvailable
+                0x00000000       0x32 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferBytesAvailable
+                0x00000000       0x22 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferSend
+                0x00000000      0x33c build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferSendFromISR
+                0x00000000      0x204 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferReceive
+                0x00000000      0x262 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferNextMessageLengthBytes
+                0x00000000       0xb6 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferReceiveFromISR
+                0x00000000      0x1d2 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferIsEmpty
+                0x00000000       0x16 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferIsFull
+                0x00000000       0x50 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferSendCompletedFromISR
+                0x00000000       0x56 build/default/production/_ext/739144360/stream_buffer.o
+ .text.xStreamBufferReceiveCompletedFromISR
+                0x00000000       0x56 build/default/production/_ext/739144360/stream_buffer.o
+ .text.uxStreamBufferGetStreamBufferNotificationIndex
+                0x00000000        0x6 build/default/production/_ext/739144360/stream_buffer.o
+ .text.vStreamBufferSetStreamBufferNotificationIndex
+                0x00000000        0x6 build/default/production/_ext/739144360/stream_buffer.o
+ .comment       0x00000000       0x30 build/default/production/_ext/739144360/stream_buffer.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/tasks.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/tasks.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/tasks.o
+ .text.prvAddCurrentTaskToDelayedList
+                0x00000000      0x1d0 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskDelete
+                0x00000000      0x134 build/default/production/_ext/739144360/tasks.o
+ .text.uxTaskPriorityGet
+                0x00000000       0x24 build/default/production/_ext/739144360/tasks.o
+ .text.uxTaskPriorityGetFromISR
+                0x00000000       0x16 build/default/production/_ext/739144360/tasks.o
+ .text.uxTaskBasePriorityGet
+                0x00000000       0x24 build/default/production/_ext/739144360/tasks.o
+ .text.uxTaskBasePriorityGetFromISR
+                0x00000000       0x16 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskPrioritySet
+                0x00000000      0x176 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskSuspend
+                0x00000000      0x108 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskResume
+                0x00000000       0xfe build/default/production/_ext/739144360/tasks.o
+ .text.xTaskResumeFromISR
+                0x00000000      0x104 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskEndScheduler
+                0x00000000       0x6e build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGetTickCount
+                0x00000000       0x1c build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGetTickCountFromISR
+                0x00000000       0x12 build/default/production/_ext/739144360/tasks.o
+ .text.uxTaskGetNumberOfTasks
+                0x00000000        0x6 build/default/production/_ext/739144360/tasks.o
+ .text.pcTaskGetName
+                0x00000000       0x1a build/default/production/_ext/739144360/tasks.o
+ .text.xTaskCatchUpTicks
+                0x00000000       0x44 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskPlaceOnEventList
+                0x00000000      0x17c build/default/production/_ext/739144360/tasks.o
+ .text.vTaskPlaceOnUnorderedEventList
+                0x00000000      0x1e2 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskRemoveFromEventList
+                0x00000000      0x16c build/default/production/_ext/739144360/tasks.o
+ .text.vTaskRemoveFromUnorderedEventList
+                0x00000000      0x118 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskSetTimeOutState
+                0x00000000       0x2c build/default/production/_ext/739144360/tasks.o
+ .text.vTaskInternalSetTimeOutState
+                0x00000000       0x22 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskCheckForTimeOut
+                0x00000000      0x114 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskMissedYield
+                0x00000000        0x8 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGetCurrentTaskHandle
+                0x00000000        0xa build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGetCurrentTaskHandleForCore
+                0x00000000       0x14 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGetSchedulerState
+                0x00000000       0x20 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskPriorityInherit
+                0x00000000      0x132 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskPriorityDisinherit
+                0x00000000       0xd6 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskPriorityDisinheritAfterTimeout
+                0x00000000      0x102 build/default/production/_ext/739144360/tasks.o
+ .text.uxTaskResetEventItemValue
+                0x00000000       0x42 build/default/production/_ext/739144360/tasks.o
+ .text.pvTaskIncrementMutexHeldCount
+                0x00000000       0x16 build/default/production/_ext/739144360/tasks.o
+ .text.ulTaskGenericNotifyTake
+                0x00000000      0x124 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGenericNotifyWait
+                0x00000000      0x17c build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGenericNotify
+                0x00000000      0x194 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGenericNotifyFromISR
+                0x00000000      0x244 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskGenericNotifyGiveFromISR
+                0x00000000      0x16c build/default/production/_ext/739144360/tasks.o
+ .text.xTaskGenericNotifyStateClear
+                0x00000000       0x32 build/default/production/_ext/739144360/tasks.o
+ .text.ulTaskGenericNotifyValueClear
+                0x00000000       0x62 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskResetState
+                0x00000000       0x5a build/default/production/_ext/739144360/tasks.o
+ .text          0x00000000        0x0 build/default/production/_ext/739144360/timers.o
+ .data          0x00000000        0x0 build/default/production/_ext/739144360/timers.o
+ .bss           0x00000000        0x0 build/default/production/_ext/739144360/timers.o
+ .comment       0x00000000       0x30 build/default/production/_ext/739144360/timers.o
+ .text          0x00000000        0x0 build/default/production/_ext/1987829343/newmain.o
+ .data          0x00000000        0x0 build/default/production/_ext/1987829343/newmain.o
+ .bss           0x00000000        0x0 build/default/production/_ext/1987829343/newmain.o
+ .text.vApplicationIdleHook
+                0x00000000        0x2 build/default/production/_ext/1987829343/newmain.o
+ .bss.g_millis  0x00000000        0x4 build/default/production/_ext/1987829343/newmain.o
+ .bss.schedInitdone
+                0x00000000        0x1 build/default/production/_ext/1987829343/newmain.o
+ .text          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .data          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .bss           0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc.mul
+                0x00000000       0x1e C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc.div
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc   0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc.prologue
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc.builtins
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc.fmul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text.libgcc.fixed
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_umulhisi3.o)
+ .text          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .data          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .bss           0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc.mul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc.div
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc   0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc.prologue
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc.builtins
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc.fmul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text.libgcc.fixed
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ .text          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .data          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .bss           0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc.mul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc.div
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc.prologue
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc.builtins
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc.fmul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text.libgcc.fixed
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+ .text          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .data          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .bss           0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc.mul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc.div
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc.prologue
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc.builtins
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc.fmul
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text.libgcc.fixed
+                0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+ .text          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
+ .data          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
+ .bss           0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
+ .text.avr-libc
+                0x00000000       0x12 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
+ .text          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memset.o)
+ .data          0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memset.o)
+ .bss           0x00000000        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memset.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00040000         xr
+data             0x00800200         0x00002000         rw!x
+eeprom           0x00810000         0x00001000         rw!x
+fuse             0x00820000         0x00000003         rw!x
+lock             0x00830000         0x00000400         rw!x
+signature        0x00840000         0x00000400         rw!x
+user_signatures  0x00850000         0x00000400         rw!x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800200
+LOAD C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+LOAD build/default/production/_ext/686616193/gpiom2560.o
+LOAD build/default/production/_ext/508962574/port.o
+LOAD build/default/production/_ext/346853003/heap_4.o
+LOAD build/default/production/_ext/739144360/croutine.o
+LOAD build/default/production/_ext/739144360/event_groups.o
+LOAD build/default/production/_ext/739144360/list.o
+LOAD build/default/production/_ext/739144360/queue.o
+LOAD build/default/production/_ext/739144360/stream_buffer.o
+LOAD build/default/production/_ext/739144360/tasks.o
+LOAD build/default/production/_ext/739144360/timers.o
+LOAD build/default/production/_ext/1987829343/newmain.o
+                0x00000001                        __MPLAB_BUILD = 0x1
+START GROUP
+LOAD C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libm.a
+END GROUP
+START GROUP
+LOAD C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a
+LOAD C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libm.a
+LOAD C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a
+LOAD C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6\libatmega2560.a
+END GROUP
+                0x00000000                        __TEXT_REGION_ORIGIN__ = DEFINED (__TEXT_REGION_ORIGIN__)?__TEXT_REGION_ORIGIN__:0x0
+                [0x00040000]                      __TEXT_REGION_LENGTH__ = DEFINED (__TEXT_REGION_LENGTH__)?__TEXT_REGION_LENGTH__:0x100000
+                [0x00800200]                      __DATA_REGION_ORIGIN__ = DEFINED (__DATA_REGION_ORIGIN__)?__DATA_REGION_ORIGIN__:0x800200
+                [0x00002000]                      __DATA_REGION_LENGTH__ = DEFINED (__DATA_REGION_LENGTH__)?__DATA_REGION_LENGTH__:0xfe00
+                [0x00001000]                      __EEPROM_REGION_LENGTH__ = DEFINED (__EEPROM_REGION_LENGTH__)?__EEPROM_REGION_LENGTH__:0x10000
+                [0x00000003]                      __FUSE_REGION_LENGTH__ = DEFINED (__FUSE_REGION_LENGTH__)?__FUSE_REGION_LENGTH__:0x400
+                0x00000400                        __LOCK_REGION_LENGTH__ = DEFINED (__LOCK_REGION_LENGTH__)?__LOCK_REGION_LENGTH__:0x400
+                0x00000400                        __SIGNATURE_REGION_LENGTH__ = DEFINED (__SIGNATURE_REGION_LENGTH__)?__SIGNATURE_REGION_LENGTH__:0x400
+                0x00000400                        __USER_SIGNATURE_REGION_LENGTH__ = DEFINED (__USER_SIGNATURE_REGION_LENGTH__)?__USER_SIGNATURE_REGION_LENGTH__:0x400
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0x185e
+ *(.vectors)
+ .vectors       0x00000000       0xe4 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+                0x00000000                __vector_default
+                0x00000000                __vectors
+ *(.vectors)
+ *(.progmem.gcc*)
+                0x000000e4                        . = ALIGN (0x2)
+                0x000000e4                        __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x000000e4        0xc linker stubs
+ *(.trampolines*)
+                0x000000f0                        __trampolines_end = .
+ *libprintf_flt.a:*(.progmem.data)
+ *libc.a:*(.progmem.data)
+ *(.progmem.*)
+                0x000000f0                        . = ALIGN (0x2)
+ *(.lowtext)
+ .lowtext       0x000000f0       0x58 build/default/production/_ext/739144360/tasks.o
+ *(.lowtext*)
+                0x00000148                        __ctors_start = .
+ *(.ctors)
+                0x00000148                        __ctors_end = .
+                0x00000148                        __dtors_start = .
+ *(.dtors)
+                0x00000148                        __dtors_end = .
+ SORT_BY_NAME(*)(.ctors)
+ SORT_BY_NAME(*)(.dtors)
+ *(.init0)
+ .init0         0x00000148        0x0 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+                0x00000148                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x00000148       0x10 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x00000158       0x1a C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_copy_data.o)
+                0x00000158                __do_copy_data
+ .init4         0x00000172       0x10 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_clear_bss.o)
+                0x00000172                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x00000182        0x8 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+ *(.init9)
+ *(.text)
+ .text          0x0000018a        0x4 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+                0x0000018a                __vector_38
+                0x0000018a                __vector_22
+                0x0000018a                __vector_28
+                0x0000018a                __vector_32
+                0x0000018a                __vector_34
+                0x0000018a                __vector_24
+                0x0000018a                __vector_12
+                0x0000018a                __vector_55
+                0x0000018a                __vector_46
+                0x0000018a                __bad_interrupt
+                0x0000018a                __vector_31
+                0x0000018a                __vector_35
+                0x0000018a                __vector_39
+                0x0000018a                __vector_23
+                0x0000018a                __vector_30
+                0x0000018a                __vector_45
+                0x0000018a                __vector_25
+                0x0000018a                __vector_54
+                0x0000018a                __vector_13
+                0x0000018a                __vector_17
+                0x0000018a                __vector_19
+                0x0000018a                __vector_56
+                0x0000018a                __vector_49
+                0x0000018a                __vector_41
+                0x0000018a                __vector_43
+                0x0000018a                __vector_27
+                0x0000018a                __vector_33
+                0x0000018a                __vector_47
+                0x0000018a                __vector_52
+                0x0000018a                __vector_37
+                0x0000018a                __vector_44
+                0x0000018a                __vector_51
+                0x0000018a                __vector_15
+                0x0000018a                __vector_36
+                0x0000018a                __vector_29
+                0x0000018a                __vector_40
+                0x0000018a                __vector_26
+                0x0000018a                __vector_48
+                0x0000018a                __vector_14
+                0x0000018a                __vector_53
+                0x0000018a                __vector_50
+                0x0000018a                __vector_16
+                0x0000018a                __vector_18
+                0x0000018a                __vector_20
+                0x0000018a                __vector_42
+                0x0000018e                        . = ALIGN (0x2)
+ *(.text.*)
+ .text.GPIO_Init
+                0x0000018e       0x7a build/default/production/_ext/686616193/gpiom2560.o
+                0x0000018e                GPIO_Init
+ .text.GPIO_TogglePins
+                0x00000208       0x28 build/default/production/_ext/686616193/gpiom2560.o
+                0x00000208                GPIO_TogglePins
+ .text.__vector_1
+                0x00000230       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x00000230                __vector_1
+ .text.__vector_2
+                0x0000028e       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x0000028e                __vector_2
+ .text.__vector_3
+                0x000002ec       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x000002ec                __vector_3
+ .text.__vector_4
+                0x0000034a       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x0000034a                __vector_4
+ .text.__vector_5
+                0x000003a8       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x000003a8                __vector_5
+ .text.__vector_6
+                0x00000406       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x00000406                __vector_6
+ .text.__vector_7
+                0x00000464       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x00000464                __vector_7
+ .text.__vector_8
+                0x000004c2       0x5e build/default/production/_ext/686616193/gpiom2560.o
+                0x000004c2                __vector_8
+ .text.__vector_9
+                0x00000520       0x60 build/default/production/_ext/686616193/gpiom2560.o
+                0x00000520                __vector_9
+ .text.__vector_10
+                0x00000580       0x60 build/default/production/_ext/686616193/gpiom2560.o
+                0x00000580                __vector_10
+ .text.__vector_11
+                0x000005e0       0x60 build/default/production/_ext/686616193/gpiom2560.o
+                0x000005e0                __vector_11
+ .text.pxPortInitialiseStack
+                0x00000640       0x1e build/default/production/_ext/508962574/port.o
+                0x00000640                pxPortInitialiseStack
+ .text.xPortStartScheduler
+                0x0000065e       0x78 build/default/production/_ext/508962574/port.o
+                0x0000065e                xPortStartScheduler
+ .text.hot.vPortYield
+                0x000006d6       0xc2 build/default/production/_ext/508962574/port.o
+                0x000006d6                vPortYield
+ .text.hot.vPortYieldFromTick
+                0x00000798       0xc8 build/default/production/_ext/508962574/port.o
+                0x00000798                vPortYieldFromTick
+ .text.hot.__vector_21
+                0x00000860        0x6 build/default/production/_ext/508962574/port.o
+                0x00000860                __vector_21
+ .text.pvPortMalloc
+                0x00000866      0x1ee build/default/production/_ext/346853003/heap_4.o
+                0x00000866                pvPortMalloc
+ .text.vPortFree
+                0x00000a54      0x14e build/default/production/_ext/346853003/heap_4.o
+                0x00000a54                vPortFree
+ .text.vListInitialise
+                0x00000ba2       0x22 build/default/production/_ext/739144360/list.o
+                0x00000ba2                vListInitialise
+ .text.vListInitialiseItem
+                0x00000bc4        0x8 build/default/production/_ext/739144360/list.o
+                0x00000bc4                vListInitialiseItem
+ .text.vListInsert
+                0x00000bcc       0x70 build/default/production/_ext/739144360/list.o
+                0x00000bcc                vListInsert
+ .text.uxListRemove
+                0x00000c3c       0x58 build/default/production/_ext/739144360/list.o
+                0x00000c3c                uxListRemove
+ .text.prvAddNewTaskToReadyList
+                0x00000c94      0x172 build/default/production/_ext/739144360/tasks.o
+ .text.vTaskSwitchContext.part.0
+                0x00000e06      0x102 build/default/production/_ext/739144360/tasks.o
+ .text.xTaskCreate
+                0x00000f08      0x190 build/default/production/_ext/739144360/tasks.o
+                0x00000f08                xTaskCreate
+ .text.vTaskStartScheduler
+                0x00001098       0xfa build/default/production/_ext/739144360/tasks.o
+                0x00001098                vTaskStartScheduler
+ .text.vTaskSuspendAll
+                0x00001192        0xc build/default/production/_ext/739144360/tasks.o
+                0x00001192                vTaskSuspendAll
+ .text.xTaskIncrementTick
+                0x0000119e      0x2d8 build/default/production/_ext/739144360/tasks.o
+                0x0000119e                xTaskIncrementTick
+ .text.xTaskResumeAll
+                0x00001476      0x21a build/default/production/_ext/739144360/tasks.o
+                0x00001476                xTaskResumeAll
+ .text.vTaskDelay
+                0x00001690      0x108 build/default/production/_ext/739144360/tasks.o
+                0x00001690                vTaskDelay
+ .text.vTaskSwitchContext
+                0x00001798       0x14 build/default/production/_ext/739144360/tasks.o
+                0x00001798                vTaskSwitchContext
+ .text.LedTask  0x000017ac       0x16 build/default/production/_ext/1987829343/newmain.o
+                0x000017ac                LedTask
+ .text.Led2Task
+                0x000017c2       0x16 build/default/production/_ext/1987829343/newmain.o
+                0x000017c2                Led2Task
+ .text.startup.main
+                0x000017d8       0x70 build/default/production/_ext/1987829343/newmain.o
+                0x000017d8                main
+ .text.vApplicationStackOverflowHook
+                0x00001848        0x2 build/default/production/_ext/1987829343/newmain.o
+                0x00001848                vApplicationStackOverflowHook
+ .text.vApplicationMallocFailedHook
+                0x0000184a        0x2 build/default/production/_ext/1987829343/newmain.o
+                0x0000184a                vApplicationMallocFailedHook
+ .text.avr-libc
+                0x0000184c        0xe C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/../../../../avr/lib/avr6\libc.a(memset.o)
+                0x0000184c                memset
+                0x0000185a                        . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x0000185a        0x0 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+                0x0000185a                _exit
+                0x0000185a                exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x0000185a        0x4 C:/AVR/avr8-gnu-toolchain-win32_x86_64/bin/../lib/gcc/avr/15.1.0/avr6\libgcc.a(_exit.o)
+ *(.fini0)
+ *(.hightext)
+ *(.hightext*)
+ *(.progmemx.*)
+                0x0000185e                        . = ALIGN (0x2)
+ *(.jumptables)
+ *(.jumptables*)
+                0x0000185e                        _etext = .
+
+.data           0x00800200       0x3c load address 0x0000185e
+                0x00800200                        PROVIDE (__data_start = .)
+ *(.data)
+ *(.data*)
+ *(.gnu.linkonce.d*)
+ *(.rodata)
+ .rodata        0x00800200        0x5 build/default/production/_ext/1987829343/newmain.o
+ *(.rodata*)
+ .rodata.CSWTCH.5
+                0x00800205       0x16 build/default/production/_ext/686616193/gpiom2560.o
+ .rodata.CSWTCH.3
+                0x0080021b       0x16 build/default/production/_ext/686616193/gpiom2560.o
+ .rodata.uxTopUsedPriority
+                0x00800231        0x1 build/default/production/_ext/739144360/tasks.o
+ .rodata.main.str1.1
+                0x00800232        0xa build/default/production/_ext/1987829343/newmain.o
+ *(.gnu.linkonce.r*)
+                0x0080023c                        . = ALIGN (0x2)
+                0x0080023c                        _edata = .
+                0x0080023c                        PROVIDE (__data_end = .)
+
+.bss            0x0080023c     0x10b4
+                0x0080023c                        PROVIDE (__bss_start = .)
+ *(.bss)
+ *(.bss*)
+ .bss.pcintCallbacks
+                0x0080023c        0x8 build/default/production/_ext/686616193/gpiom2560.o
+ .bss.extIntCallbacks
+                0x00800244       0x10 build/default/production/_ext/686616193/gpiom2560.o
+ .bss.xNumberOfSuccessfulFrees
+                0x00800254        0x2 build/default/production/_ext/346853003/heap_4.o
+ .bss.xNumberOfSuccessfulAllocations
+                0x00800256        0x2 build/default/production/_ext/346853003/heap_4.o
+ .bss.xMinimumEverFreeBytesRemaining
+                0x00800258        0x2 build/default/production/_ext/346853003/heap_4.o
+ .bss.xFreeBytesRemaining
+                0x0080025a        0x2 build/default/production/_ext/346853003/heap_4.o
+ .bss.pxEnd     0x0080025c        0x2 build/default/production/_ext/346853003/heap_4.o
+ .bss.xStart    0x0080025e        0x4 build/default/production/_ext/346853003/heap_4.o
+ .bss.ucHeap    0x00800262     0x1000 build/default/production/_ext/346853003/heap_4.o
+ .bss.uxSchedulerSuspended
+                0x00801262        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xIdleTaskHandles
+                0x00801263        0x2 build/default/production/_ext/739144360/tasks.o
+ .bss.xNextTaskUnblockTime
+                0x00801265        0x4 build/default/production/_ext/739144360/tasks.o
+ .bss.uxTaskNumber
+                0x00801269        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xNumOfOverflows
+                0x0080126a        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xYieldPendings
+                0x0080126b        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xPendedTicks
+                0x0080126c        0x4 build/default/production/_ext/739144360/tasks.o
+ .bss.xSchedulerRunning
+                0x00801270        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.uxTopReadyPriority
+                0x00801271        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xTickCount
+                0x00801272        0x4 build/default/production/_ext/739144360/tasks.o
+ .bss.uxCurrentNumberOfTasks
+                0x00801276        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xSuspendedTaskList
+                0x00801277        0xb build/default/production/_ext/739144360/tasks.o
+ .bss.uxDeletedTasksWaitingCleanUp
+                0x00801282        0x1 build/default/production/_ext/739144360/tasks.o
+ .bss.xTasksWaitingTermination
+                0x00801283        0xb build/default/production/_ext/739144360/tasks.o
+ .bss.xPendingReadyList
+                0x0080128e        0xb build/default/production/_ext/739144360/tasks.o
+ .bss.pxOverflowDelayedTaskList
+                0x00801299        0x2 build/default/production/_ext/739144360/tasks.o
+ .bss.pxDelayedTaskList
+                0x0080129b        0x2 build/default/production/_ext/739144360/tasks.o
+ .bss.xDelayedTaskList2
+                0x0080129d        0xb build/default/production/_ext/739144360/tasks.o
+ .bss.xDelayedTaskList1
+                0x008012a8        0xb build/default/production/_ext/739144360/tasks.o
+ .bss.pxReadyTasksLists
+                0x008012b3       0x37 build/default/production/_ext/739144360/tasks.o
+ .bss.pxCurrentTCB
+                0x008012ea        0x2 build/default/production/_ext/739144360/tasks.o
+                0x008012ea                pxCurrentTCB
+ .bss.ledTask2Handle
+                0x008012ec        0x2 build/default/production/_ext/1987829343/newmain.o
+                0x008012ec                ledTask2Handle
+ .bss.ledTask1Handle
+                0x008012ee        0x2 build/default/production/_ext/1987829343/newmain.o
+                0x008012ee                ledTask1Handle
+ *(COMMON)
+                0x008012f0                        PROVIDE (__bss_end = .)
+                0x0000185e                        __data_load_start = LOADADDR (.data)
+                0x0000189a                        __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x008012f0        0x0
+                [!provide]                        PROVIDE (__noinit_start = .)
+ *(.noinit .noinit.* .gnu.linkonce.n.*)
+                [!provide]                        PROVIDE (__noinit_end = .)
+                0x008012f0                        _end = .
+                [!provide]                        PROVIDE (__heap_start = .)
+                0x00000000                        __flmap_init_label = DEFINED (__flmap_noinit_start)?__flmap_noinit_start:0x0
+                0x00000000                        __flmap = DEFINED (__flmap)?__flmap:0x0
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                        __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x2f
+ *(.comment)
+ .comment       0x00000000       0x2f build/default/production/_ext/686616193/gpiom2560.o
+                                 0x30 (size before relaxing)
+ .comment       0x0000002f       0x30 build/default/production/_ext/508962574/port.o
+ .comment       0x0000002f       0x30 build/default/production/_ext/346853003/heap_4.o
+ .comment       0x0000002f       0x30 build/default/production/_ext/739144360/list.o
+ .comment       0x0000002f       0x30 build/default/production/_ext/739144360/tasks.o
+ .comment       0x0000002f       0x30 build/default/production/_ext/1987829343/newmain.o
+
+.note.gnu.avr.deviceinfo
+                0x00000000       0x40
+ .note.gnu.avr.deviceinfo
+                0x00000000       0x40 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+
+.gnu.build.attributes
+ *(.gnu.build.attributes .gnu.build.attributes.*)
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x00000000      0xbbc
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x00000000      0xbbc C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+
+.debug_abbrev   0x00000000      0xb1a
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0xb1a C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+
+.debug_line     0x00000000      0x1fa
+ *(.debug_line .debug_line.* .debug_line_end)
+ .debug_line    0x00000000      0x1fa C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str      0x00000000      0x3e6
+ *(.debug_str)
+ .debug_str     0x00000000      0x3e6 C:/Users/Jaydeep/.mchp_packs/Microchip/ATmega_DFP/3.6.299/gcc/dev/atmega2560/avr6/crtatmega2560.o
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.debug_addr
+ *(.debug_addr)
+
+.debug_line_str
+ *(.debug_line_str)
+
+.debug_loclists
+ *(.debug_loclists)
+
+.debug_macro
+ *(.debug_macro)
+
+.debug_names
+ *(.debug_names)
+
+.debug_rnglists
+ *(.debug_rnglists)
+
+.debug_str_offsets
+ *(.debug_str_offsets)
+
+.debug_sup
+ *(.debug_sup)
+OUTPUT(dist/default/production/AVR_FreeRTOS.X.production.elf elf32-avr)
+LOAD linker stubs

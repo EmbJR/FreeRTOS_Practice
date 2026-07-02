@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/newmain.c</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/FreeRTOS-Kernel/portable/ATmega/port.c</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/FreeRTOS-Kernel/portable/ATmega/portmacro.h</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/Timers/Timerm2560.c</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/GPIO/gpiom2560.c</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/Timers/Timerm2560.h</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/FreeRTOS-Kernel/tasks.c</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/FreeRTOS-Kernel/include/FreeRTOS.h</file>
+            <file>file:/E:/New/Microcontrollers/AVR/Git/AVR_Practice/FreeRTOS_Port/AVR_FreeRTOS.X/GPIO/gpiom2560.h</file>
+        </group>
+    </open-files>
+</project-private>

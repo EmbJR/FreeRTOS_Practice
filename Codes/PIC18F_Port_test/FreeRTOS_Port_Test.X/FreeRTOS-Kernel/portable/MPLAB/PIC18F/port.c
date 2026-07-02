@@ -27,40 +27,17 @@
  */
 
 /*
-Changes between V1.2.4 and V1.2.5
-
-    + Introduced portGLOBAL_INTERRUPT_FLAG definition to test the global
-      interrupt flag setting.  Using the two bits defined within
-      portINITAL_INTERRUPT_STATE was causing the w register to get clobbered
-      before the test was performed.
-
-Changes from V1.2.5
-
-    + Set the interrupt vector address to 0x08.  Previously it was at the
-      incorrect address for compatibility mode of 0x18.
-
-Changes from V2.1.1
-
-    + PCLATU and PCLATH are now saved as part of the context.  This allows
-      function pointers to be used within tasks.  Thanks to Javier Espeche
-      for the enhancement.
-
-Changes from V2.3.1
-
-    + TABLAT is now saved as part of the task context.
-
-Changes from V3.2.0
-
-    + TBLPTRU is now initialised to zero as the MPLAB compiler expects this
-      value and does not write to the register.
-*/
+ * This is the MPLAB/PIC18F port for the xc8 v3 compiler.
+ *
+ * Original C18 / xc8 v1/v2 port written by various FreeRTOS contributors.
+ * Rewritten for xc8 v3 by replacing the legacy #asm/#endasm blocks with
+ * the xc8 v3 asm("...") inline assembly form. C symbols are referenced
+ * by their assembler name (prefixed with an underscore).
+ */
 
 /* Scheduler include files. */
 #include "FreeRTOS.h"
 #include "task.h"
-
-/* MPLAB library include file. */
-#include "timers.h"
 
 /*-----------------------------------------------------------
  * Implementation of functions defined in portable.h for the PIC port.
@@ -99,8 +76,8 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  * The serial port ISR's are defined in serial.c, but are called from portable
  * as they use the same vector as the tick ISR.
  */
-void vSerialTxISR( void );
-void vSerialRxISR( void );
+extern void vSerialTxISR( void );
+extern void vSerialRxISR( void );
 
 /*
  * Perform hardware setup to enable ticks.
@@ -146,90 +123,74 @@ static void prvLowInterrupt( void );
  */
 #define portSAVE_CONTEXT( ucForcedInterruptFlags )                              \
 {                                                                               \
-    _asm                                                                        \
-        /* Save the status and WREG registers first, as these will get modified \
-        by the operations below. */                                             \
-        MOVFF   WREG, PREINC1                                                   \
-        MOVFF   STATUS, PREINC1                                                 \
-        /* Save the INTCON register with the appropriate bits forced if         \
-        necessary - as described above. */                                      \
-        MOVFF   INTCON, WREG                                                    \
-        IORLW   ucForcedInterruptFlags                                          \
-        MOVFF   WREG, PREINC1                                                   \
-    _endasm                                                                     \
+    /* Save WREG, STATUS, INTCON (with forced flags). */                        \
+    asm( "movff WREG, PREINC1" );                                               \
+    asm( "movff STATUS, PREINC1" );                                             \
+    asm( "movff INTCON, WREG" );                                                \
+    asm( "iorlw %0" :: "i" ( ucForcedInterruptFlags ) );                        \
+    asm( "movff WREG, PREINC1" );                                               \
                                                                                 \
     portDISABLE_INTERRUPTS();                                                   \
                                                                                 \
-    _asm                                                                        \
-        /* Store the necessary registers to the stack. */                       \
-        MOVFF   BSR, PREINC1                                                    \
-        MOVFF   FSR2L, PREINC1                                                  \
-        MOVFF   FSR2H, PREINC1                                                  \
-        MOVFF   FSR0L, PREINC1                                                  \
-        MOVFF   FSR0H, PREINC1                                                  \
-        MOVFF   TABLAT, PREINC1                                                 \
-        MOVFF   TBLPTRU, PREINC1                                                \
-        MOVFF   TBLPTRH, PREINC1                                                \
-        MOVFF   TBLPTRL, PREINC1                                                \
-        MOVFF   PRODH, PREINC1                                                  \
-        MOVFF   PRODL, PREINC1                                                  \
-        MOVFF   PCLATU, PREINC1                                                 \
-        MOVFF   PCLATH, PREINC1                                                 \
-        /* Store the .tempdata and MATH_DATA areas as described above. */       \
-        CLRF    FSR0L, 0                                                        \
-        CLRF    FSR0H, 0                                                        \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   INDF0, PREINC1                                                  \
-        MOVFF   FSR0L, PREINC1                                                  \
-        MOVFF   FSR0H, PREINC1                                                  \
-        /* Store the hardware stack pointer in a temp register before we        \
-        modify it. */                                                           \
-        MOVFF   STKPTR, FSR0L                                                   \
-    _endasm                                                                     \
+    /* Store the necessary registers to the stack. */                           \
+    asm( "movff BSR, PREINC1" );                                                \
+    asm( "movff FSR2L, PREINC1" );                                              \
+    asm( "movff FSR2H, PREINC1" );                                              \
+    asm( "movff FSR0L, PREINC1" );                                              \
+    asm( "movff FSR0H, PREINC1" );                                              \
+    asm( "movff TABLAT, PREINC1" );                                             \
+    asm( "movff TBLPTRU, PREINC1" );                                            \
+    asm( "movff TBLPTRH, PREINC1" );                                            \
+    asm( "movff TBLPTRL, PREINC1" );                                            \
+    asm( "movff PRODH, PREINC1" );                                              \
+    asm( "movff PRODL, PREINC1" );                                              \
+    asm( "movff PCLATU, PREINC1" );                                             \
+    asm( "movff PCLATH, PREINC1" );                                             \
+    /* Store the .tempdata and MATH_DATA areas. */                              \
+    asm( "clrf FSR0L, c" );                                                     \
+    asm( "clrf FSR0H, c" );                                                     \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff POSTINC0, PREINC1" );                                           \
+    asm( "movff INDF0, PREINC1" );                                              \
+    asm( "movff FSR0L, PREINC1" );                                              \
+    asm( "movff FSR0H, PREINC1" );                                              \
+    /* Store the hardware stack pointer in a temp register before we modify it.*/\
+    asm( "movff STKPTR, FSR0L" );                                               \
                                                                                 \
-        /* Store each address from the hardware stack. */                       \
-        while( STKPTR > ( uint8_t ) 0 )                             \
-        {                                                                       \
-            _asm                                                                \
-                MOVFF   TOSL, PREINC1                                           \
-                MOVFF   TOSH, PREINC1                                           \
-                MOVFF   TOSU, PREINC1                                           \
-                POP                                                             \
-            _endasm                                                             \
-        }                                                                       \
+    /* Store each address from the hardware stack. */                           \
+    while( STKPTR > ( uint8_t ) 0 )                                             \
+    {                                                                           \
+        asm( "movff TOSL, PREINC1" );                                           \
+        asm( "movff TOSH, PREINC1" );                                           \
+        asm( "movff TOSU, PREINC1" );                                           \
+        asm( "pop" );                                                           \
+    }                                                                           \
                                                                                 \
-    _asm                                                                        \
-        /* Store the number of addresses on the hardware stack (from the        \
-        temporary register). */                                                 \
-        MOVFF   FSR0L, PREINC1                                                  \
-        MOVF    PREINC1, 1, 0                                                   \
-    _endasm                                                                     \
+    /* Store the number of addresses on the hardware stack. */                  \
+    asm( "movff FSR0L, PREINC1" );                                              \
+    asm( "movf PREINC1, 1, 0" );                                                \
                                                                                 \
     /* Save the new top of the software stack in the TCB. */                    \
-    _asm                                                                        \
-        MOVFF   pxCurrentTCB, FSR0L                                             \
-        MOVFF   pxCurrentTCB + 1, FSR0H                                         \
-        MOVFF   FSR1L, POSTINC0                                                 \
-        MOVFF   FSR1H, POSTINC0                                                 \
-    _endasm                                                                     \
+    asm( "movff _pxCurrentTCB, FSR0L" );                                        \
+    asm( "movff _pxCurrentTCB + 1, FSR0H" );                                    \
+    asm( "movff FSR1L, POSTINC0" );                                             \
+    asm( "movff FSR1H, POSTINC0" );                                             \
 }
 /*-----------------------------------------------------------*/
 
@@ -239,80 +200,72 @@ static void prvLowInterrupt( void );
  */
 #define portRESTORE_CONTEXT()                                                   \
 {                                                                               \
-    _asm                                                                        \
-        /* Set FSR0 to point to pxCurrentTCB->pxTopOfStack. */                  \
-        MOVFF   pxCurrentTCB, FSR0L                                             \
-        MOVFF   pxCurrentTCB + 1, FSR0H                                         \
+    /* Set FSR0 to point to pxCurrentTCB->pxTopOfStack. */                      \
+    asm( "movff _pxCurrentTCB, FSR0L" );                                        \
+    asm( "movff _pxCurrentTCB + 1, FSR0H" );                                    \
                                                                                 \
-        /* De-reference FSR0 to set the address it holds into FSR1.             \
-        (i.e. *( pxCurrentTCB->pxTopOfStack ) ). */                             \
-        MOVFF   POSTINC0, FSR1L                                                 \
-        MOVFF   POSTINC0, FSR1H                                                 \
+    /* De-reference FSR0 to set the address it holds into FSR1. */              \
+    asm( "movff POSTINC0, FSR1L" );                                             \
+    asm( "movff POSTINC0, FSR1H" );                                             \
                                                                                 \
-        /* How many return addresses are there on the hardware stack?  Discard  \
-        the first byte as we are pointing to the next free space. */            \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-    _endasm                                                                     \
+    /* How many return addresses are there on the hardware stack?  Discard     \
+    the first byte as we are pointing to the next free space. */                \
+    asm( "movff POSTDEC1, FSR0L" );                                             \
+    asm( "movff POSTDEC1, FSR0L" );                                             \
                                                                                 \
     /* Fill the hardware stack from our software stack. */                      \
     STKPTR = 0;                                                                 \
                                                                                 \
     while( STKPTR < FSR0L )                                                     \
     {                                                                           \
-        _asm                                                                    \
-            PUSH                                                                \
-            MOVF    POSTDEC1, 0, 0                                              \
-            MOVWF   TOSU, 0                                                     \
-            MOVF    POSTDEC1, 0, 0                                              \
-            MOVWF   TOSH, 0                                                     \
-            MOVF    POSTDEC1, 0, 0                                              \
-            MOVWF   TOSL, 0                                                     \
-        _endasm                                                                 \
+        asm( "push" );                                                          \
+        asm( "movf POSTDEC1, 0, 0" );                                           \
+        asm( "movwf TOSU, 0" );                                                 \
+        asm( "movf POSTDEC1, 0, 0" );                                           \
+        asm( "movwf TOSH, 0" );                                                 \
+        asm( "movf POSTDEC1, 0, 0" );                                           \
+        asm( "movwf TOSL, 0" );                                                 \
     }                                                                           \
                                                                                 \
-    _asm                                                                        \
-        /* Restore the .tmpdata and MATH_DATA memory. */                        \
-        MOVFF   POSTDEC1, FSR0H                                                 \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, INDF0                                                 \
-        /* Restore the other registers forming the tasks context. */            \
-        MOVFF   POSTDEC1, PCLATH                                                \
-        MOVFF   POSTDEC1, PCLATU                                                \
-        MOVFF   POSTDEC1, PRODL                                                 \
-        MOVFF   POSTDEC1, PRODH                                                 \
-        MOVFF   POSTDEC1, TBLPTRL                                               \
-        MOVFF   POSTDEC1, TBLPTRH                                               \
-        MOVFF   POSTDEC1, TBLPTRU                                               \
-        MOVFF   POSTDEC1, TABLAT                                                \
-        MOVFF   POSTDEC1, FSR0H                                                 \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-        MOVFF   POSTDEC1, FSR2H                                                 \
-        MOVFF   POSTDEC1, FSR2L                                                 \
-        MOVFF   POSTDEC1, BSR                                                   \
-        /* The next byte is the INTCON register.  Read this into WREG as some   \
-        manipulation is required. */                                            \
-        MOVFF   POSTDEC1, WREG                                                  \
-    _endasm                                                                     \
+    /* Restore the .tmpdata and MATH_DATA memory. */                             \
+    asm( "movff POSTDEC1, FSR0H" );                                             \
+    asm( "movff POSTDEC1, FSR0L" );                                             \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, POSTDEC0" );                                          \
+    asm( "movff POSTDEC1, INDF0" );                                             \
+    /* Restore the other registers forming the tasks context. */                \
+    asm( "movff POSTDEC1, PCLATH" );                                            \
+    asm( "movff POSTDEC1, PCLATU" );                                            \
+    asm( "movff POSTDEC1, PRODL" );                                             \
+    asm( "movff POSTDEC1, PRODH" );                                             \
+    asm( "movff POSTDEC1, TBLPTRL" );                                           \
+    asm( "movff POSTDEC1, TBLPTRH" );                                           \
+    asm( "movff POSTDEC1, TBLPTRU" );                                           \
+    asm( "movff POSTDEC1, TABLAT" );                                            \
+    asm( "movff POSTDEC1, FSR0H" );                                             \
+    asm( "movff POSTDEC1, FSR0L" );                                             \
+    asm( "movff POSTDEC1, FSR2H" );                                             \
+    asm( "movff POSTDEC1, FSR2L" );                                             \
+    asm( "movff POSTDEC1, BSR" );                                               \
+    /* The next byte is the INTCON register.  Read this into WREG as some       \
+    manipulation is required. */                                                \
+    asm( "movff POSTDEC1, WREG" );                                              \
                                                                                 \
     /* From the INTCON register, only the interrupt enable bits form part       \
     of the tasks context.  It is perfectly legitimate for another task to       \
@@ -320,22 +273,18 @@ static void prvLowInterrupt( void );
     */                                                                          \
     if( WREG & portGLOBAL_INTERRUPT_FLAG )                                      \
     {                                                                           \
-        _asm                                                                    \
-            MOVFF   POSTDEC1, STATUS                                            \
-            MOVFF   POSTDEC1, WREG                                              \
-            /* Return enabling interrupts. */                                   \
-            RETFIE  0                                                           \
-        _endasm                                                                 \
+        asm( "movff POSTDEC1, STATUS" );                                        \
+        asm( "movff POSTDEC1, WREG" );                                          \
+        /* Return enabling interrupts. */                                       \
+        asm( "retfie 0" );                                                      \
     }                                                                           \
     else                                                                        \
     {                                                                           \
-        _asm                                                                    \
-            MOVFF   POSTDEC1, STATUS                                            \
-            MOVFF   POSTDEC1, WREG                                              \
-            /* Return without effecting interrupts.  The context may have       \
-            been saved from a critical region. */                               \
-            RETURN  0                                                           \
-        _endasm                                                                 \
+        asm( "movff POSTDEC1, STATUS" );                                        \
+        asm( "movff POSTDEC1, WREG" );                                          \
+        /* Return without effecting interrupts.  The context may have           \
+        been saved from a critical region. */                                   \
+        asm( "return 0" );                                                      \
     }                                                                           \
 }
 /*-----------------------------------------------------------*/
@@ -515,25 +464,24 @@ void vPortYield( void )
 /*-----------------------------------------------------------*/
 
 /*
- * Vector for ISR.  Nothing here must alter any registers!
+ * Low-priority interrupt vector.  In xc8 v3, the low-priority interrupt
+ * vector is a function with the __interrupt(low_priority) and
+ * __interrupt_low_priority attributes, and the high-priority vector is
+ * supplied via the interrupt_low() function pointer or by naming a
+ * function with the appropriate attribute.
  */
-#pragma code high_vector=0x08
-static void prvLowInterrupt( void )
+void __interrupt( low_priority ) prvLowInterrupt( void )
 {
     /* Was the interrupt the tick? */
     if( PIR1bits.CCP1IF )
     {
-        _asm
-            goto prvTickISR
-        _endasm
+        asm( "goto _prvTickISR" );
     }
 
     /* Was the interrupt a byte being received? */
     if( PIR1bits.RCIF )
     {
-        _asm
-            goto vSerialRxISR
-        _endasm
+        asm( "goto _vSerialRxISR" );
     }
 
     /* Was the interrupt the Tx register becoming empty? */
@@ -541,14 +489,10 @@ static void prvLowInterrupt( void )
     {
         if( PIE1bits.TXIE )
         {
-            _asm
-                goto vSerialTxISR
-            _endasm
+            asm( "goto _vSerialTxISR" );
         }
     }
 }
-#pragma code
-
 /*-----------------------------------------------------------*/
 
 /*
@@ -605,11 +549,18 @@ uint8_t ucByte;
     CCP1CONbits.CCP1M3 = portBIT_SET;   /*< Compare match mode. */
     PIE1bits.CCP1IE = portBIT_SET;      /*< Interrupt enable. */
 
+    /* Configure Timer1: 16-bit read/write, internal instruction cycle
+    clock, 1:1 prescaler, CCP1 uses Timer1. */
+    T1CON = ( uint8_t ) 0x00;
+    T1CONbits.TMR1CS = 0;               /*< Internal clock (Fosc/4). */
+    T1CONbits.T1CKPS0 = 0;              /*< 1:1 prescale. */
+    T1CONbits.T1CKPS1 = 0;              /*< 1:1 prescale. */
+    T1CONbits.T1OSCEN = 0;              /*< Oscillator off. */
+    T1CONbits.T1SYNC = 1;               /*< Not used. */
+    T1CONbits.RD16 = 1;                 /*< 16-bit read/write. */
+    T1CONbits.TMR1ON = 1;               /*< Timer1 on. */
+
     /* We are only going to use the global interrupt bit, so set the peripheral
     bit to true. */
     INTCONbits.GIEL = portBIT_SET;
-
-    /* Provided library function for setting up the timer that will produce the
-    tick. */
-    OpenTimer1( T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_1 & T1_CCP1_T3_CCP2 );
 }
