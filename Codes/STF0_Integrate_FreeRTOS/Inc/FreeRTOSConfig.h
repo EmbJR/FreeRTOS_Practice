@@ -1,11 +1,6 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-void ConfigureTimerForRunTimeStats(void);
-extern volatile uint32_t ulHighFrequencyTimerTicks;
-
-
-
 /* Hardware specific settings */
 #define configCPU_CLOCK_HZ              ( ( unsigned long ) 48000000 ) // Set to your system clock (e.g., 48MHz)
 #define configTICK_RATE_HZ              ( ( TickType_t ) 1000 )
@@ -29,14 +24,14 @@ extern volatile uint32_t ulHighFrequencyTimerTicks;
 #define INCLUDE_vTaskDelay              1
 #define INCLUDE_xTaskGetSchedulerState  1
 //-------------- Timer enable ---------------------//
-#define configUSE_TIMERS                 1
+#define configUSE_TIMERS                 0
 #define configTIMER_TASK_PRIORITY        (configMAX_PRIORITIES - 1)
 #define configTIMER_QUEUE_LENGTH         5
 #define configTIMER_TASK_STACK_DEPTH     128
 //------------------------------------------------//
 
 /* Memory Allocation */
-#define configSUPPORT_STATIC_ALLOCATION     0
+#define configSUPPORT_STATIC_ALLOCATION     1
 #define configSUPPORT_DYNAMIC_ALLOCATION    1
 
 
@@ -50,9 +45,13 @@ extern volatile uint32_t ulHighFrequencyTimerTicks;
 //#define configUSE_TRACE_FACILITY      	1
 //#define configUSE_STATS_FORMATTING_FUNCTIONS     1
 
-#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ConfigureTimerForRunTimeStats()
+#if (configGENERATE_RUN_TIME_STATS == 1)
+void ConfigureTimerForRunTimeStats(void);
+extern volatile uint32_t ulHighFrequencyTimerTicks;
 
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ConfigureTimerForRunTimeStats()
 #define portGET_RUN_TIME_COUNTER_VALUE() ulHighFrequencyTimerTicks
+#endif
 //-------- for task statistics ends ----------//
 
 /* Hook definitions */

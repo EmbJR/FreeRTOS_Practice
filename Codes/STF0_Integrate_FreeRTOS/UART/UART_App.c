@@ -412,12 +412,12 @@ void UART_App_Init(void){
     /* First character will be sent from the interrupt handler */
     UART_EnableInterrupt(USART1, USART_CR1_TXEIE);
 
-    xTaskCreate(
-    	UART_App,
-        "UART_App",
-        128,
-        NULL,
-        tskIDLE_PRIORITY + 2,
-        &uartTaskHandle
-    );
+//    xTaskCreate(
+//    	UART_App,
+//        "UART_App",
+//        128,
+//        NULL,
+//        tskIDLE_PRIORITY + 2,
+//        &uartTaskHandle
+//    );
 }
