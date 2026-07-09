@@ -2,7 +2,7 @@
 #define FREERTOS_CONFIG_H
 
 /* Hardware specific settings */
-#define configCPU_CLOCK_HZ              ( ( unsigned long ) 48000000 ) // Set to your system clock (e.g., 48MHz)
+#define configCPU_CLOCK_HZ              ( ( unsigned long ) 16000000 ) // Set to your system clock (e.g., 48MHz)
 #define configTICK_RATE_HZ              ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES            ( 5 )
 #define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 128 )
@@ -62,11 +62,19 @@ extern volatile uint32_t ulHighFrequencyTimerTicks;
 
 //-----------------------------------------//
 
+//---------------- For MPU ---------------------//
+#define configENABLE_MPU 								1
+/* For the MPU_xTaskCreate API */
+#define configUSE_MPU_WRAPPERS_V1               		1
+#define configTOTAL_MPU_REGIONS 						16
+#define configSYSTEM_CALL_STACK_SIZE    				( 128 )
+#define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY		1
+//-------------------------------------------//
+
 /* Define the interrupt handlers required by FreeRTOS */
 #define xPortPendSVHandler              PendSV_Handler
 #define vPortSVCHandler                 SVC_Handler
 #define xPortSysTickHandler             SysTick_Handler
 
-#define configENABLE_MPU 0
 
 #endif /* FREERTOS_CONFIG_H */

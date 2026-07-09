@@ -51,6 +51,13 @@ MEMORY
   ITCMRAM (xrw)  : ORIGIN = 0x00000000, LENGTH = 64K
 }
 
+/* Symbols for FreeRTOS MPU */
+__FLASH_segment_start__   = ORIGIN( FLASH );          /* Start of Flash memory */
+__FLASH_segment_end__     = __FLASH_segment_start__ + LENGTH( FLASH ); /* End of Flash memory */
+
+__SRAM_segment_start__    = ORIGIN( RAM );            /* Start of SRAM memory */
+__SRAM_segment_end__      = __SRAM_segment_start__ + LENGTH( RAM ); /* End of SRAM memory */
+
 /* Define output sections */
 SECTIONS
 {
@@ -61,6 +68,40 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
+
+  /*----------------- MPU related start-------------------------/
+  /* Define the privileged functions section */
+  __privileged_functions_start__ = .;
+  .privileged_functions :
+  {
+      . = ALIGN(4);
+      *(.privileged_functions) /* Your privileged code */
+      *(.text)                 /* Standard code */
+      . = ALIGN(4);
+  } >FLASH
+  __privileged_functions_end__ = .;
+
+  /* Define the privileged data section */
+  __privileged_data_start__ = .;
+  .privileged_data :
+  {
+      . = ALIGN(4);
+      *(.privileged_data) /* Your privileged data */
+      *(.data)            /* Standard data */
+      . = ALIGN(4);
+  } >RAM
+  __privileged_data_end__ = .;
+
+  /* Define the system call region */
+  __syscalls_flash_start__ = .;
+  .syscalls :
+  {
+      . = ALIGN(4);
+      *(.syscalls)          /* Place all functions marked with __attribute__((section(".syscalls"))) */
+      . = ALIGN(4);
+  } > FLASH
+  __syscalls_flash_end__ = .;
+  /*----------------- MPU related ends-------------------------/
 
   /* The program code and other data goes into FLASH */
   .text :
