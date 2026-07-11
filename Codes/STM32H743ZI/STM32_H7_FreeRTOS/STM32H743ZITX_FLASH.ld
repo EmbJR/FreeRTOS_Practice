@@ -55,8 +55,8 @@ MEMORY
 __FLASH_segment_start__   = ORIGIN( FLASH );          /* Start of Flash memory */
 __FLASH_segment_end__     = __FLASH_segment_start__ + LENGTH( FLASH ); /* End of Flash memory */
 
-__SRAM_segment_start__    = ORIGIN( RAM );            /* Start of SRAM memory */
-__SRAM_segment_end__      = __SRAM_segment_start__ + LENGTH( RAM ); /* End of SRAM memory */
+__SRAM_segment_start__    = ORIGIN( RAM_D1 );            /* Start of SRAM memory */
+__SRAM_segment_end__      = __SRAM_segment_start__ + LENGTH( RAM_D1 ); /* End of SRAM memory */
 
 /* Define output sections */
 SECTIONS
@@ -89,7 +89,7 @@ SECTIONS
       *(.privileged_data) /* Your privileged data */
       *(.data)            /* Standard data */
       . = ALIGN(4);
-  } >RAM
+  } >RAM_D1
   __privileged_data_end__ = .;
 
   /* Define the system call region */

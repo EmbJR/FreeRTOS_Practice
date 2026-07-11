@@ -47,7 +47,6 @@
 #define LED2_PIN         1
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
-  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
 //--------------- FreeRTOS specific ---------------//
@@ -227,17 +226,16 @@ void TIM2_handler(void)
     if (TIM2->SR & TIM_SR_CC2IF)
     {
         TIM2->SR = ~TIM_SR_CC2IF;
-        /* Toggle LED to indicate interrupt occurred */
         if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
         {
-          /* Call tick handler */
         	xPortSysTickHandler();
         }
-    	//GPIO_TogglePin(LED2_PORT, LED2_PIN);
     }
 }
 
 int main(void) {
+
+	//SCB->CPACR |= ((3UL << (10 * 2)) | (3UL << (11 * 2)));
 
 	//SystemClock_400MHz_HSI();
     SystemClock_16MHz_HSI();
@@ -308,4 +306,28 @@ void vApplicationMallocFailedHook(void)
         /* Memory exhausted */
     	//Delay_ms(1000);
     }
+}
+
+/* Required for static allocation of the Idle Task */
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
+                                   StackType_t **ppxIdleTaskStackBuffer,
+                                   uint32_t *pulIdleTaskStackSize) {
+    static StaticTask_t xIdleTaskTCB;
+    static StackType_t xIdleTaskStack[configMINIMAL_STACK_SIZE];
+
+    *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
+    *ppxIdleTaskStackBuffer = xIdleTaskStack;
+    *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+}
+
+/* Required for static allocation of the Timer Task */
+void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
+                                    StackType_t **ppxTimerTaskStackBuffer,
+                                    uint32_t *pulTimerTaskStackSize) {
+    static StaticTask_t xTimerTaskTCB;
+    static StackType_t xTimerTaskStack[configTIMER_TASK_STACK_DEPTH];
+
+    *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
+    *ppxTimerTaskStackBuffer = xTimerTaskStack;
+    *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
 }
