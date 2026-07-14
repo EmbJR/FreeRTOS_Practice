@@ -5,8 +5,8 @@
 #define configCPU_CLOCK_HZ              ( ( unsigned long ) 16000000 ) // Set to your system clock (e.g., 48MHz)
 #define configTICK_RATE_HZ              ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES            ( 5 )
-#define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 128 )
-#define configTOTAL_HEAP_SIZE           ( ( size_t ) ( 5 * 1024 ) ) // Adjust based on your available RAM
+#define configMINIMAL_STACK_SIZE        ( ( uint16_t ) 128 )
+#define configTOTAL_HEAP_SIZE           ( ( size_t ) ( 15 * 1024 ) ) // Adjust based on your available RAM
 #define configMAX_TASK_NAME_LEN         ( 10 )
 
 
@@ -78,6 +78,8 @@ extern volatile uint32_t ulHighFrequencyTimerTicks;
 #define configPROTECTED_KERNEL_OBJECT_POOL_SIZE			( 150 )
 /* See https://freertos.org/a00110.html#configSYSTEM_CALL_STACK_SIZE for details. */
 #define configSYSTEM_CALL_STACK_SIZE					( 128 )
+
+#define MPU_ALIGNMENT 									__attribute__((aligned(32)))
 
 //-------------------------------------------//
 
