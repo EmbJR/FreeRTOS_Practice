@@ -93,7 +93,10 @@ typedef void ( * portISR_t )( void );
 #define portMPU_REGION_ENABLE                     ( 0x01UL )
 #define portPERIPHERALS_START_ADDRESS             0x40000000UL
 #define portPERIPHERALS_END_ADDRESS               0x5FFFFFFFUL
-
+//----------------- GPIO Region -----------------------------//
+#define portGPIOPERIPHERALS_START_ADDRESS             0x58020400UL
+#define portGPIOPERIPHERALS_END_ADDRESS               0x580207FFUL
+//-----------------------------------------------------------//
 /* Constants required to access and manipulate the SysTick. */
 #define portNVIC_SYSTICK_INT                      ( 0x00000002UL )
 #define portNVIC_SYSTICK_ENABLE                   ( 0x00000001UL )
@@ -1298,13 +1301,13 @@ static void prvSetupMPU( void )
 
         /* By default allow everything to access the general peripherals.  The
          * system peripherals and registers are protected. */
-        portMPU_REGION_BASE_ADDRESS_REG = ( portPERIPHERALS_START_ADDRESS ) |
-                                          ( portMPU_REGION_VALID ) |
-                                          ( portGENERAL_PERIPHERALS_REGION );
+        // portMPU_REGION_BASE_ADDRESS_REG = ( portPERIPHERALS_START_ADDRESS ) |
+        //                                   ( portMPU_REGION_VALID ) |
+        //                                   ( portGENERAL_PERIPHERALS_REGION );
 
-        portMPU_REGION_ATTRIBUTE_REG = ( portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER ) |
-                                       ( prvGetMPURegionSizeSetting( portPERIPHERALS_END_ADDRESS - portPERIPHERALS_START_ADDRESS ) ) |
-                                       ( portMPU_REGION_ENABLE );
+        // portMPU_REGION_ATTRIBUTE_REG = ( portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER ) |
+        //                                ( prvGetMPURegionSizeSetting( portPERIPHERALS_END_ADDRESS - portPERIPHERALS_START_ADDRESS ) ) |
+        //                                ( portMPU_REGION_ENABLE );
 
         /* Enable the memory fault exception. */
         portNVIC_SYS_CTRL_STATE_REG |= portNVIC_MEM_FAULT_ENABLE;

@@ -77,6 +77,7 @@ MEMORY
  * initial 32K RAM is used to store kernel data. */
 __privileged_functions_region_size__  = 64K;
 __privileged_data_region_size__       = 32K;
+__temp_functions_size__       = 32K;
 
 __FLASH_segment_start__               = ORIGIN( FLASH );
 __FLASH_segment_end__                 = __FLASH_segment_start__ + LENGTH( FLASH );
@@ -86,6 +87,9 @@ __SRAM_segment_end__                  = __SRAM_segment_start__ + LENGTH( RAM_D1 
 
 __privileged_functions_start__        = __FLASH_segment_start__;
 __privileged_functions_end__          = __FLASH_segment_start__ + __privileged_functions_region_size__;
+
+__temp_sec__start__        	  		  = __privileged_functions_end__;
+__temp_sec__end__          	  		  = __temp_sec__start__ + __temp_functions_size__;
 
 __privileged_data_start__             = __SRAM_segment_start__;
 __privileged_data_end__               = __SRAM_segment_start__ + __privileged_data_region_size__;
@@ -109,6 +113,14 @@ SECTIONS
      * the current section (.privileged_functions in this case). As a result,
      * setting dot (.) to a value sets the size of the section. */
     . = __privileged_functions_region_size__;
+  } >FLASH
+  
+   /* Constant data into "FLASH" Rom type memory */
+  .temp_sec :
+  {
+    . = ALIGN(4);
+    *(temp_sec)         /* .rodata sections (constants, strings, etc.) */
+    . = ALIGN(4);
   } >FLASH
 
   /* The program code and other data into "FLASH" Rom type memory */

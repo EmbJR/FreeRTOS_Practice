@@ -77,6 +77,17 @@ void Led2_Task(void *val);
 
 //------------------- MPU specific ------------------------//
 
+//----------------- GPIO Region -----------------------------//
+#define GPIOB_START_ADDRESS             0x58020400UL
+#define GPIOB_END_ADDRESS               0x580207FFUL
+#define GPIOB_Length					(uint32_t)(GPIOB_END_ADDRESS - GPIOB_START_ADDRESS)
+
+#define GPIOE_START_ADDRESS             0x58020400UL
+#define GPIOE_END_ADDRESS               0x580207FFUL
+#define GPIOE_Length					(uint32_t)(GPIOE_END_ADDRESS - GPIOE_START_ADDRESS)
+
+//-----------------------------------------------------------//
+
 static StackType_t led1Stack[configMINIMAL_STACK_SIZE] __attribute__( ( aligned( configMINIMAL_STACK_SIZE * sizeof( StackType_t ) ) ) );
 TaskHandle_t led1TaskHandle;
 TaskParameters_t Led1_TaskPara =
@@ -85,14 +96,14 @@ TaskParameters_t Led1_TaskPara =
 	.pcName			= "RegTest1",
 	.usStackDepth	= configMINIMAL_STACK_SIZE,
 	.pvParameters	= NULL,
-	.uxPriority		= tskIDLE_PRIORITY,
+	.uxPriority		= tskIDLE_PRIORITY,// | portPRIVILEGE_BIT,
 	.puxStackBuffer	= led1Stack,
 	.xRegions		=	{
-							{ ucSharedMemory1,					SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER	},
-							{ ucSharedMemory2,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ( void * ) ucROTaskFaultTracker,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER								},
-							{ 0,								0,					0																						},
-							//							//{ (void*)0x58020400, 				0x400, 				tskMPU_REGION_READ_ONLY | tskMPU_REGION_EXECUTE_NEVER | tskMPU_REGION_DEVICE_MEMORY},
+							{ ucSharedMemory1,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
+							{ ucSharedMemory2,	SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER},
+							{ (void *)GPIOB,	GPIOB_Length,		portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
+							{ 0,				0,					0																					},
+							{ 0,				0,					0																					}
 						}
 };
 
@@ -110,8 +121,9 @@ TaskParameters_t Led2_TaskPara =
     .xRegions = {
                     {ucSharedMemory1, SHARED_MEMORY_SIZE, portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
                     {ucSharedMemory2, SHARED_MEMORY_SIZE, portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-                    { 0,0,0},
-                    { 0,0,0},
+					{(void *)GPIOE,	  GPIOE_Length,		  portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
+					{ 0,0,0},
+                    { 0,0,0}
                 }
 };
 //-------------------------------------------------------------------//
@@ -256,12 +268,17 @@ void timer_init(void)
 void Led1_Task(void *val)
 {
 	vTaskDelay( pdMS_TO_TICKS( 500 ) );
+
+	//RCC_SetD2PPRE1(APB_PRESCALER_DIV2);
+
 	for(;;)
 	{
 		ucSharedMemory1[0] = 0xA5;
-		//*((uint32_t*)24000800) = 0xABCDEF12;
+		//ucSharedMemory3[0] = 0xAB;
 		GPIO_TogglePin(LED1_PORT, LED1_PIN);
 		vTaskDelay( pdMS_TO_TICKS( 500 ) );
+		//*((uint32_t*)0x30040000) = 0xABCDEF12;
+		//H7_TIM_Stop(TIM2);
 	}
 }
 
@@ -272,9 +289,8 @@ void Led2_Task(void *val)
 	{
 		GPIO_TogglePin(LED2_PORT, LED2_PIN);
 		vTaskDelay( pdMS_TO_TICKS( 500 ) );
-		ucSharedMemory2[0] = 0x25;
-		vTaskDelay( pdMS_TO_TICKS( 500 ) );
-		ucSharedMemory2[1] = 0x25;
+		ucSharedMemory1[1] = 0x25;
+		//ucSharedMemory2[1] = 0x25;
 	}
 }
 
@@ -283,7 +299,6 @@ void TIM2_handler(void)
 {
     if (TIM2->SR & TIM_SR_CC2IF)
     {
-
         TIM2->SR = ~TIM_SR_CC2IF;
         if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
         {
@@ -291,173 +306,6 @@ void TIM2_handler(void)
         }
     }
 }
-
-//---------------------------------------------------------------------//
-
-static void prvROAccessTask( void * pvParameters )
-{
-uint8_t ucVal;
-
-	/* Unused parameters. */
-	( void ) pvParameters;
-
-	for( ; ; )
-	{
-		/* This task performs the following sequence for all the shared memory
-		 * regions:
-		 *
-		 * 1. Perfrom a read access to the shared memory. Since this task has
-		 *    RO access to the shared memory, the read operation is successful.
-		 *
-		 * 2. Set ucROTaskFaultTracker[ 0 ] to 1 before performing a write to
-		 *    the shared memory. Since this task has Read Only access to the
-		 *    shared memory, the write operation would result in a Memory Fault.
-		 *    Setting ucROTaskFaultTracker[ 0 ] to 1 tells the Memory Fault
-		 *    Handler that this is an expected fault. The handler recovers from
-		 *    the expected fault gracefully by jumping to the next instruction.
-		 *
-		 * 3. Perfrom a write to the shared memory resulting in a memory fault.
-		 *
-		 * 4. Ensure that the write access did generate MemFault and the fault
-		 *    handler did clear the  ucROTaskFaultTracker[ 0 ].
-		 */
-		/* Perform the above mentioned sequence on ucSharedMemory1. */
-		ucVal = ucSharedMemory1[ 0 ];
-		/* Silent compiler warnings about unused variables. */
-		( void ) ucVal;
-		ucROTaskFaultTracker[ 0 ] = 1;
-		//ucSharedMemory1[ 0 ] = 0;
-		configASSERT( ucROTaskFaultTracker[ 0 ] == 0 );
-
-		/* Perform the above mentioned sequence on ucSharedMemory2. */
-		ucVal = ucSharedMemory2[ 0 ];
-		/* Silent compiler warnings about unused variables. */
-		( void ) ucVal;
-		ucROTaskFaultTracker[ 0 ] = 1;
-		//ucSharedMemory2[ 0 ] = 0;
-		configASSERT( ucROTaskFaultTracker[ 0 ] == 0 );
-
-		/* Perform the above mentioned sequence on ucSharedMemory3. */
-		ucVal = ucSharedMemory3[ 0 ];
-		/* Silent compiler warnings about unused variables. */
-		( void ) ucVal;
-		ucROTaskFaultTracker[ 0 ] = 1;
-		//ucSharedMemory3[ 0 ] = 0;
-		configASSERT( ucROTaskFaultTracker[ 0 ] == 0 );
-
-		/* Perform the above mentioned sequence on ucSharedMemory4. */
-		ucVal = ucSharedMemory4[ 0 ];
-		/* Silent compiler warnings about unused variables. */
-		( void ) ucVal;
-		ucROTaskFaultTracker[ 0 ] = 1;
-		//ucSharedMemory4[ 0 ] = 0;
-		configASSERT( ucROTaskFaultTracker[ 0 ] == 0 );
-
-		/* Perform the above mentioned sequence on ucSharedMemory5. */
-		ucVal = ucSharedMemory5[ 0 ];
-		/* Silent compiler warnings about unused variables. */
-		( void ) ucVal;
-		ucROTaskFaultTracker[ 0 ] = 1;
-		//ucSharedMemory5[ 0 ] = 0;
-		configASSERT( ucROTaskFaultTracker[ 0 ] == 0 );
-
-		/* Perform the above mentioned sequence on ucSharedMemory6. */
-		ucVal = ucSharedMemory6[ 0 ];
-		/* Silent compiler warnings about unused variables. */
-		( void ) ucVal;
-		ucROTaskFaultTracker[ 0 ] = 1;
-		//ucSharedMemory6[ 0 ] = 0;
-		configASSERT( ucROTaskFaultTracker[ 0 ] == 0 );
-
-		/* Wait for a second. */
-		vTaskDelay( pdMS_TO_TICKS( 1000 ) );
-	}
-}
-/*-----------------------------------------------------------*/
-
-static void prvRWAccessTask( void * pvParameters )
-{
-	/* Unused parameters. */
-	( void ) pvParameters;
-
-	for( ; ; )
-	{
-		/* This task has RW access to shared memories and therefore can write to
-		 * them. */
-		ucSharedMemory1[ 0 ] = 0;
-		ucSharedMemory2[ 0 ] = 0;
-		ucSharedMemory3[ 0 ] = 0;
-		ucSharedMemory4[ 0 ] = 0;
-		ucSharedMemory5[ 0 ] = 0;
-		ucSharedMemory6[ 0 ] = 0;
-
-		/* Wait for a second. */
-		vTaskDelay( pdMS_TO_TICKS( 1000 ) );
-	}
-}
-/*-----------------------------------------------------------*/
-
-void vStartMPUDemo( void )
-{
-/**
- * Since stack of a task is protected using MPU, it must satisfy MPU
- * requirements as mentioned at the top of this file.
- */
-static StackType_t xROAccessTaskStack[ configMINIMAL_STACK_SIZE ] __attribute__( ( aligned( configMINIMAL_STACK_SIZE * sizeof( StackType_t ) ) ) );
-static StackType_t xRWAccessTaskStack[ configMINIMAL_STACK_SIZE ] __attribute__( ( aligned( configMINIMAL_STACK_SIZE * sizeof( StackType_t ) ) ) );
-TaskParameters_t xROAccessTaskParameters =
-{
-	.pvTaskCode		= prvROAccessTask,
-	.pcName			= "ROAccess",
-	.usStackDepth	= configMINIMAL_STACK_SIZE,
-	.pvParameters	= NULL,
-	.uxPriority		= tskIDLE_PRIORITY,
-	.puxStackBuffer	= xROAccessTaskStack,
-	.xRegions		=	{
-							{ ucSharedMemory1,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ucSharedMemory2,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ucSharedMemory3,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ucSharedMemory4,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ucSharedMemory5,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ucSharedMemory6,					SHARED_MEMORY_SIZE,	portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER	},
-							{ ( void * ) ucROTaskFaultTracker,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER								},
-							{ 0,								0,					0																						},
-							{ 0,								0,					0																						},
-							{ 0,								0,					0																						},
-							{ 0,								0,					0																						}
-						}
-};
-TaskParameters_t xRWAccessTaskParameters =
-{
-	.pvTaskCode		= prvRWAccessTask,
-	.pcName			= "RWAccess",
-	.usStackDepth	= configMINIMAL_STACK_SIZE,
-	.pvParameters	= NULL,
-	.uxPriority		= tskIDLE_PRIORITY,
-	.puxStackBuffer	= xRWAccessTaskStack,
-	.xRegions		=	{
-							{ ucSharedMemory1,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-							{ ucSharedMemory2,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-							{ ucSharedMemory3,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-							{ ucSharedMemory4,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-							{ ucSharedMemory5,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-							{ ucSharedMemory6,	SHARED_MEMORY_SIZE,	portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER},
-							{ 0,				0,					0														},
-							{ 0,				0,					0														},
-							{ 0,				0,					0														},
-							{ 0,				0,					0														},
-							{ 0,				0,					0														}
-						}
-};
-
-	/* Create an unprivileged task with RO access to ucSharedMemory. */
-	xTaskCreateRestricted( &( xROAccessTaskParameters ), NULL );
-
-	/* Create an unprivileged task with RW access to ucSharedMemory. */
-	xTaskCreateRestricted( &( xRWAccessTaskParameters ), NULL );
-}
-//-----------------------------------------------------------------------------//
-
 int main(void) {
 
 	//SCB->CPACR |= ((3UL << (10 * 2)) | (3UL << (11 * 2)));
@@ -478,7 +326,6 @@ int main(void) {
 
     xTaskCreateRestricted(&( Led1_TaskPara ), NULL);
     xTaskCreateRestricted(&( Led2_TaskPara ), NULL);
-    //vStartMPUDemo();
 
     timer_init();
     vTaskStartScheduler();
