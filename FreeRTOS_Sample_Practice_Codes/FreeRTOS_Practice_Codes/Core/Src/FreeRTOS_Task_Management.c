@@ -24,6 +24,8 @@ TIM_HandleTypeDef htim6;
 #define STACK_SIZE 128
 
 TaskHandle_t task1Handle;
+TaskHandle_t task1Handle2;
+TaskHandle_t task1Handle3;
 
 
 void SystemClock_Config(void);
@@ -38,20 +40,80 @@ __weak void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
 }
 
-void function(void *para)
+void monitorTask(void *para)
 {
-	uint8_t cnt = 0;
+	uint16_t cnt = 0;
+
+	BaseType_t uxHighWatermark;
+
+	TickType_t tickval = xTaskGetTickCount();
   while(1)
   {
-	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-	  if(cnt++ > 100)
+	  //vTaskDelay(500);
+	  vTaskDelayUntil(&tickval, pdMS_TO_TICKS(100));
+
+	  if(cnt++ == 100)
 	  {
-		  vTaskDelete(NULL);
+		  vTaskSuspend(task1Handle2);
+		  vTaskSuspend(task1Handle3);
 	  }
-	  vTaskDelay(500);
+	  else if(cnt == 200)
+	  {
+		  vTaskResume(task1Handle2);
+		  vTaskResume(task1Handle3);
+	  }
+	  else if(cnt == 300)
+	  {
+		  vTaskDelete(task1Handle2);
+		  vTaskDelete(task1Handle3);
+	  }
+	  else if(cnt == 310)
+	  {
+		  uxHighWatermark = uxTaskGetStackHighWaterMark(NULL);
+		  (void)uxHighWatermark;
+	  }
   }
 }
 
+void Task2 (void* para)
+{
+	TickType_t timebase;
+	BaseType_t delayCheck;
+	BaseType_t uxHighWaterMark;
+
+	timebase = xTaskGetTickCount();
+	while(1)
+	{
+		delayCheck = xTaskDelayUntil(&timebase, pdMS_TO_TICKS(1000));
+		if(delayCheck == pdTRUE)
+		{
+			// The task was delayed.
+		}
+		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+		uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+		(void)uxHighWaterMark;
+	}
+}
+
+void Task3 (void* para)
+{
+	TickType_t timebase;
+	BaseType_t delayCheck;
+	BaseType_t uxStackHighWaterMark;
+
+	timebase = xTaskGetTickCount();
+	while(1)
+	{
+		delayCheck = xTaskDelayUntil(&timebase, pdMS_TO_TICKS(100));
+		if(delayCheck == pdTRUE)
+		{
+			// The task was delayed.
+		}
+		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+		uxStackHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+		(void)uxStackHighWaterMark;
+	}
+}
 
 int main(void)
 {
@@ -60,14 +122,35 @@ int main(void)
 	MX_GPIO_Init();
 	MX_TIM6_Init();
 
-	if(xTaskCreate(function,
-				"SampleTask",
+
+	if(xTaskCreate(monitorTask,
+			"SampleTask",
+			STACK_SIZE,
+			NULL,
+			tskIDLE_PRIORITY + 4,
+			&task1Handle) == pdFAIL)
+	{
+	// Task created
+		while(1);
+	}
+
+	if(xTaskCreate(Task2,
+				"Task2",
 				STACK_SIZE,
 				NULL,
 				tskIDLE_PRIORITY + 2,
-				&task1Handle) == NULL)
+				&task1Handle2) == pdFAIL)
 	{
-	// Task created
+		while(1);
+	}
+
+	if(xTaskCreate(Task3,
+				"Task3",
+				STACK_SIZE,
+				NULL,
+				tskIDLE_PRIORITY + 1,
+				&task1Handle3) == pdFAIL)
+	{
 		while(1);
 	}
 

@@ -20,7 +20,7 @@
 #define configUSE_RECURSIVE_MUTEXES     1
 #define configUSE_COUNTING_SEMAPHORES   1
 
-//#define INCLUDE_xTaskDelayUntil         1
+#define INCLUDE_xTaskDelayUntil         1
 #define INCLUDE_vTaskDelay              1
 #define INCLUDE_xTaskGetSchedulerState  1
 //-------------- Timer enable ---------------------//
