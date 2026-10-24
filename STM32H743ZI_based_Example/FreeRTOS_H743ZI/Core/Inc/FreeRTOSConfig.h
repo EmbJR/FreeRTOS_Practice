@@ -2,7 +2,8 @@
 #define FREERTOS_CONFIG_H
 
 /* Hardware specific settings */
-#define configCPU_CLOCK_HZ              ( ( unsigned long ) 48000000 ) // Set to your system clock (e.g., 48MHz)
+#define configCPU_CLOCK_HZ              ( ( unsigned long ) 100000000UL ) // Set to your system clock (e.g., 48MHz)
+//#define configSYSTICK_CLOCK_HZ   		( ( unsigned long ) 64000000UL )
 #define configTICK_RATE_HZ              ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES            ( 5 )
 #define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 128 )
