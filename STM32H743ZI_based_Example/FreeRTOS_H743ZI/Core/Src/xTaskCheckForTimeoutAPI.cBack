@@ -1,0 +1,147 @@
+#include "main.h"
+
+uint8_t data[70] = {};
+volatile uint8_t Tasknum= 0;
+
+#define STACK_SIZE 256
+
+TaskHandle_t task1Handle;
+TaskHandle_t task1Handle2;
+TaskHandle_t task1Handle3;
+
+static BaseType_t prvExampleTaskHook( void * pvParameter )
+{
+    /* Perform some action - this could be anything from logging a value,
+       updating the task state, outputting a value, etc. */
+	//HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+	uint8_t ptrdata = *(uint8_t *)pvParameter;
+
+
+    return 0;
+}
+
+bool vaitForTicks(int vaitTick)
+{
+	TimeOut_t xTimeOut;
+	TickType_t WaitTicks = pdMS_TO_TICKS(vaitTick);
+
+	vTaskSetTimeOutState(&xTimeOut);
+	while(1)
+	{
+		if(xTaskCheckForTimeOut(&xTimeOut, &WaitTicks) == pdTRUE)
+		{
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)"High Priority Task..\r\n", strlen((const char *)"High Priority Task..\r\n"));
+			return 1;
+		}
+		ulTaskNotifyTake( pdTRUE, WaitTicks );
+	}
+	return 0;
+}
+
+void monitorTask(void *para)
+{
+
+	while(1)
+	{
+		if(vaitForTicks(1000))
+		{
+			HAL_GPIO_TogglePin(LD0_GPIO_Port, LD0_Pin);
+		}
+	}
+}
+
+void HighpriorityProcess(void)
+{
+	//taskENTER_CRITICAL();
+	HAL_UART_Transmit_IT(&huart3, (const uint8_t *)"Hogh Priority Process Done..\r\n", strlen((const char *)"High Priority Process Done..\r\n"));
+	//taskEXIT_CRITICAL();
+}
+
+void Task2 (void* para)
+{
+	BaseType_t delaystate;
+	TickType_t reftime = xTaskGetTickCount();
+	while(1)
+	{
+		if(xTaskDelayUntil(&reftime, pdMS_TO_TICKS(1000)) == pdTRUE)
+		{
+			HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+			HighpriorityProcess();
+		}
+	}
+}
+
+void Task3 (void* para)
+{
+	uint8_t ptrdata = *(volatile uint8_t *)para;
+	while(1)
+	{
+	}
+}
+
+
+void FreeRTOSTestFun(uint8_t val)
+{
+
+	 if(xTaskCreate(monitorTask,
+	  			"SampleTask",
+	  			STACK_SIZE,
+	  			(uint8_t *)&Tasknum,
+	  			tskIDLE_PRIORITY + 3,
+	  			&task1Handle) == pdFAIL)
+	  	{
+	  	// Task created
+	  		while(1);
+	  	}
+
+	    Tasknum = 10;
+	  	if(xTaskCreate(Task2,
+	  				"Task2",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 2,
+	  				&task1Handle2) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+//
+//	  	Tasknum = 20;
+//	  	if(xTaskCreate(Task3,
+//	  				"Task3",
+//	  				STACK_SIZE,
+//					(uint8_t *)&Tasknum,
+//	  				tskIDLE_PRIORITY + 1,
+//	  				&task1Handle3) == pdFAIL)
+//	  	{
+//	  		while(1);
+//	  	}
+
+	  	vTaskStartScheduler();
+}
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    // Trigger a breakpoint or reset the system here
+    while (1) {
+		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+			//Delay_ms(1000);
+	}
+}
+
+#if (configUSE_IDLE_HOOK == 1)
+void vApplicationIdleHook(void) {
+    // This runs whenever no other task is ready to run
+    // Enter Sleep Mode
+    //__WFI();
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
+#endif
+
+void vApplicationMallocFailedHook(void)
+{
+    while(1)
+    {
+        /* Memory exhausted */
+    	while(1);
+    }
+}

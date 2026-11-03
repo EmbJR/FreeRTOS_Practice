@@ -31,6 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -42,12 +43,10 @@
 
 TIM_HandleTypeDef htim6;
 
-/* USER CODE BEGIN PV */
-#define STACK_SIZE 128
+UART_HandleTypeDef huart3;
 
-TaskHandle_t task1Handle;
-TaskHandle_t task1Handle2;
-TaskHandle_t task1Handle3;
+/* USER CODE BEGIN PV */
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,6 +54,7 @@ void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM6_Init(void);
+static void MX_USART3_UART_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 void vPortSetupTimerInterrupt(void)
@@ -65,59 +65,7 @@ void vPortSetupTimerInterrupt(void)
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void monitorTask(void *para)
-{
-	uint8_t val = 0;
-	bool Stat = false;
-	TimeOut_t RefTimet;
-	TickType_t RequiredTimet = 5000;
 
-	vTaskSetTimeOutState(&RefTimet);
-  while(1)
-  {
-	if(xTaskCheckForTimeOut(&RefTimet, &RequiredTimet) == pdTRUE)
-	{
-		// Timeout occured
-		vTaskSetTimeOutState(&RefTimet);
-		RequiredTimet = 5000;
-	}
-	vTaskDelay(pdMS_TO_TICKS(100));
-	// Previosly not running because this task was the highest priority and it occupied the total CPU usage by
-	// poling for the status "xTaskCheckForTimeOut()". So We added the delay "vTaskDelay" and lets the other
-	// tasks occupied the CPU whenever this task is not doing anything. Of course this is the demo code so we can add
-	// delay to make things understanding but in actual application we might apply some thing professional.
-  }
-}
-
-void Task2 (void* para)
-{
-	BaseType_t delaystate;
-
-	TickType_t tickCount = xTaskGetTickCount();
-	while(1)
-	{
-		delaystate = xTaskDelayUntil(&tickCount, pdMS_TO_TICKS(1000));
-		if(delaystate == pdTRUE)
-		{
-			HAL_GPIO_TogglePin(LD0_GPIO_Port, LD0_Pin);
-		}
-	}
-}
-
-void Task3 (void* para)
-{
-	BaseType_t delaystate;
-
-	TickType_t tickCount = xTaskGetTickCount();
-	while(1)
-	{
-		delaystate = xTaskDelayUntil(&tickCount, pdMS_TO_TICKS(500));
-		if(delaystate == pdTRUE)
-		{
-			HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-		}
-	}
-}
 //Successfully Ported..
 /* USER CODE END 0 */
 
@@ -153,44 +101,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM6_Init();
+  MX_USART3_UART_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-#if 1
-  if(xTaskCreate(monitorTask,
-  			"SampleTask",
-  			STACK_SIZE,
-  			NULL,
-  			tskIDLE_PRIORITY + 4,
-  			&task1Handle) == pdFAIL)
-  	{
-  	// Task created
-  		while(1);
-  	}
-
-  	if(xTaskCreate(Task2,
-  				"Task2",
-  				STACK_SIZE,
-  				NULL,
-  				tskIDLE_PRIORITY + 2,
-  				&task1Handle2) == pdFAIL)
-  	{
-  		while(1);
-  	}
-
-  	if(xTaskCreate(Task3,
-  				"Task3",
-  				STACK_SIZE,
-  				NULL,
-  				tskIDLE_PRIORITY + 1,
-  				&task1Handle3) == pdFAIL)
-  	{
-  		while(1);
-  	}
-
-  	vTaskStartScheduler();
-#endif
+  FreeRTOSTestFun(1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -293,8 +209,11 @@ void PeriphCommonClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* TIM6_DAC_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 15, 0);
   HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+  /* USART3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART3_IRQn, 8, 0);
+  HAL_NVIC_EnableIRQ(USART3_IRQn);
 }
 
 /**
@@ -336,6 +255,54 @@ static void MX_TIM6_Init(void)
 }
 
 /**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart3.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart3, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart3, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -363,14 +330,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD8 PD9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
   /*Configure GPIO pin : LD1_Pin */
   GPIO_InitStruct.Pin = LD1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -381,33 +340,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
-    // Trigger a breakpoint or reset the system here
-    while (1) {
-		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
-			//Delay_ms(1000);
-	}
-}
 
-#if (configUSE_IDLE_HOOK == 1)
-void vApplicationIdleHook(void) {
-    // This runs whenever no other task is ready to run
-    // Enter Sleep Mode
-    //__WFI();
-    		//GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-            //Delay_ms(10);
-	while(1);
-}
-#endif
-
-void vApplicationMallocFailedHook(void)
-{
-    while(1)
-    {
-        /* Memory exhausted */
-    	while(1);
-    }
-}
 /* USER CODE END 4 */
 
 /**
@@ -436,7 +369,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		if(dat > 1000)
 		{
 			dat = 0;
-			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+			//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		}
 #if 1
 	if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {

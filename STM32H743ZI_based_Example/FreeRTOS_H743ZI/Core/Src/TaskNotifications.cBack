@@ -1,0 +1,158 @@
+#include "main.h"
+
+uint8_t data[70] = {};
+volatile uint8_t Tasknum= 0;
+
+#define STACK_SIZE 256
+
+TaskHandle_t task1Handle;
+TaskHandle_t task1Handle2;
+TaskHandle_t task1Handle3;
+
+static BaseType_t prvExampleTaskHook( void * pvParameter )
+{
+    /* Perform some action - this could be anything from logging a value,
+       updating the task state, outputting a value, etc. */
+	//HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+	uint8_t ptrdata = *(uint8_t *)pvParameter;
+
+
+    return 0;
+}
+
+void monitorTask(void *para)
+{
+	uint8_t delta = 0;
+	while(1)
+	{
+		vTaskDelay(500);
+		delta++;
+		if(delta == 10)
+		{
+			xTaskNotifyGiveIndexed(task1Handle2, 0);
+			vTaskDelay(180);
+			xTaskNotifyGive(task1Handle3);
+		}
+		else if(delta == 20)
+		{
+			xTaskNotifyGiveIndexed(task1Handle2, 1);
+			vTaskDelay(180);
+			xTaskNotifyGive(task1Handle3);
+		}
+		else if(delta == 30)
+		{
+			xTaskNotifyGiveIndexed(task1Handle2, 2);
+			vTaskDelay(180);
+			xTaskNotifyGive(task1Handle3);
+			delta = 0;
+		}
+	}
+}
+
+#define IndexWait	0b111
+
+void Task2 (void* para)
+{
+	BaseType_t delaystate;
+	TickType_t reftime = xTaskGetTickCount();
+	while(1)
+	{
+		if(ulTaskNotifyTakeIndexed(0, pdTRUE, pdMS_TO_TICKS(50)))
+		{
+			sprintf((char*)data, "Notiy 1\r\n");
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+		else if(ulTaskNotifyTakeIndexed(1, pdTRUE, pdMS_TO_TICKS(50)))
+		{
+			sprintf((char*)data, "Notiy 2\r\n");
+		    HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+		else if(ulTaskNotifyTakeIndexed(2, pdTRUE, pdMS_TO_TICKS(50)))
+		{
+			sprintf((char*)data, "Notiy 3\r\n");
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+
+	}
+}
+
+void Task3 (void* para)
+{
+	uint8_t ptrdata = *(volatile uint8_t *)para;
+	while(1)
+	{
+		if(ulTaskNotifyTake(pdTRUE, portMAX_DELAY))
+		{
+			sprintf((char*)data, "Task3 Noted..\r\n");
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+
+	}
+}
+
+
+void FreeRTOSTestFun(uint8_t val)
+{
+
+	 if(xTaskCreate(monitorTask,
+	  			"SampleTask",
+	  			STACK_SIZE,
+	  			(uint8_t *)&Tasknum,
+	  			tskIDLE_PRIORITY + 3,
+	  			&task1Handle) == pdFAIL)
+	  	{
+	  	// Task created
+	  		while(1);
+	  	}
+
+	    Tasknum = 10;
+	  	if(xTaskCreate(Task2,
+	  				"Task2",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 2,
+	  				&task1Handle2) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+
+	  	Tasknum = 20;
+	  	if(xTaskCreate(Task3,
+	  				"Task3",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 1,
+	  				&task1Handle3) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+
+	  	vTaskStartScheduler();
+}
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    // Trigger a breakpoint or reset the system here
+    while (1) {
+		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+			//Delay_ms(1000);
+	}
+}
+
+#if (configUSE_IDLE_HOOK == 1)
+void vApplicationIdleHook(void) {
+    // This runs whenever no other task is ready to run
+    // Enter Sleep Mode
+    //__WFI();
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
+#endif
+
+void vApplicationMallocFailedHook(void)
+{
+    while(1)
+    {
+        /* Memory exhausted */
+    	while(1);
+    }
+}

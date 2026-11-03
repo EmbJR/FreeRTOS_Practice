@@ -1,0 +1,294 @@
+#include "main.h"
+
+#define NOTIFY_01	(1UL << 0UL)
+#define NOTIFY_02	(1UL << 1UL)
+#define NOTIFY_03	(1UL << 2UL)
+#define NOTIFY_04	(1UL << 3UL)
+#define NOTIFY_05	(1UL << 4UL)
+#define NOTIFY_CLRALL	0x1FUL
+#define NOTIFY_CLENONE	0x00UL
+
+#define USE_QUERY	1
+
+
+uint8_t data[70] = {};
+volatile uint8_t Tasknum= 0;
+
+#define STACK_SIZE 256
+
+TaskHandle_t task1Handle;
+TaskHandle_t task1Handle2;
+TaskHandle_t task1Handle3;
+TaskHandle_t task1Handle4;
+
+static BaseType_t prvExampleTaskHook( void * pvParameter )
+{
+    /* Perform some action - this could be anything from logging a value,
+       updating the task state, outputting a value, etc. */
+	//HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+	uint8_t ptrdata = *(uint8_t *)pvParameter;
+
+
+    return 0;
+}
+
+void monitorTask(void *para)
+{
+	uint8_t delta = 0;
+	uint32_t prevNotifyValue;
+	while(1)
+	{
+		vTaskDelay(200);
+		delta++;
+		if(delta == 10)
+		{
+#if USE_QUERY == 0 // don't use query..
+			xTaskNotifyIndexed(task1Handle2, NOTIFY_01, 20, eSetBits);
+#else // Use notify with query..
+			xTaskNotifyAndQueryIndexed(task1Handle2, NOTIFY_01, 20, eSetBits, &prevNotifyValue);
+#endif
+			vTaskDelay(180);
+		}
+		else if(delta == 20)
+		{
+#if USE_QUERY == 0 // don't use query..
+			xTaskNotifyIndexed(task1Handle2, NOTIFY_02, 30, eSetBits);
+#else // Use notify with query..
+			xTaskNotifyAndQueryIndexed(task1Handle2, NOTIFY_02, 30, eSetBits, &prevNotifyValue);
+#endif
+			vTaskDelay(180);
+#if USE_QUERY == 0 // don't use query..
+			xTaskNotify(task1Handle3, 0x50, eSetValueWithOverwrite);
+#else // Use notify with query..
+			xTaskNotifyAndQuery(task1Handle3, 0x50, eSetValueWithOverwrite, NULL);
+#endif
+
+		}
+		else if(delta == 30)
+		{
+#if USE_QUERY == 0 // don't use query..
+			xTaskNotifyIndexed(task1Handle2, NOTIFY_03, 40, eSetBits);
+#else // Use notify with query..
+			xTaskNotifyAndQueryIndexed(task1Handle2, NOTIFY_03, 40, eSetBits, &prevNotifyValue);
+#endif
+			vTaskDelay(180);
+#if USE_QUERY == 0 // don't use query..
+			if(xTaskNotify(task1Handle4, 0x60, eSetValueWithoutOverwrite) == pdPASS)
+			{
+				// Task notification value updated
+			}
+			else
+			{
+				// Task notification value not updated
+				vTaskDelay(10);
+			}
+			//xTaskNotifyStateClear( task1Handle4); By clearing the notification value, you will get success in the below API.
+			if(xTaskNotify(task1Handle4, 0x70, eSetValueWithoutOverwrite) == pdPASS)
+			{
+				// Task notification value updated
+			}
+			else
+			{
+				// Task notification value not updated
+				vTaskDelay(10);
+			}
+#else // Use notify with query..
+			if(xTaskNotifyAndQuery(task1Handle4, 0x60, eSetValueWithoutOverwrite, &prevNotifyValue) == pdPASS)
+			{
+				// Task notification value updated
+			}
+			else
+			{
+				// Task notification value not updated
+				vTaskDelay(10);
+			}
+			//xTaskNotifyStateClear( task1Handle4); By clearing the notification value, you will get success in the below API.
+			if(xTaskNotifyAndQuery(task1Handle4, 0x70, eSetValueWithoutOverwrite, &prevNotifyValue) == pdPASS)
+			{
+				// Task notification value updated
+			}
+			else
+			{
+				// Task notification value not updated
+				vTaskDelay(10);
+			}
+
+#endif
+			vTaskDelay(180);
+			xTaskNotifyGive(task1Handle3);
+			delta = 0;
+		}
+	}
+}
+
+
+void Task2 (void* para)
+{
+	uint32_t noTificationVal;
+	TickType_t reftime = xTaskGetTickCount();
+	while(1)
+	{
+		if(xTaskNotifyWaitIndexed(	NOTIFY_01,
+									0x00,
+									0xFFFFFFFF,
+									&noTificationVal,
+									pdMS_TO_TICKS(10)))
+		{
+
+			sprintf((char*)data, "Notiy 2-1 Val = %d\r\n", (int)noTificationVal);
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+		if(xTaskNotifyWaitIndexed(	NOTIFY_02,
+									0x00,
+									0xFFFFFFFF,
+									&noTificationVal,
+									pdMS_TO_TICKS(10)))
+		{
+			sprintf((char*)data, "Notiy 2-2 Val = %d\r\n", (int)noTificationVal);
+		    HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+		if(xTaskNotifyWaitIndexed(	NOTIFY_03,
+									0x00,
+									0xFFFFFFFF,
+									&noTificationVal,
+									pdMS_TO_TICKS(10)))
+		{
+			sprintf((char*)data, "Notiy 2-3 Val = %d\r\n", (int)noTificationVal);
+		    HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+		}
+	}
+}
+
+void Task3 (void* para)
+{
+	uint32_t noTificationVal;
+	uint8_t ptrdata = *(volatile uint8_t *)para;
+
+	while(1)
+	{
+
+		if(xTaskNotifyWait(	0,
+							0xFFFFFFFF,
+							&noTificationVal,
+							portMAX_DELAY))
+		{
+			if(noTificationVal != 0)
+			{
+				sprintf((char*)data, "Notiy 3- Val=%d\r\n", (int)noTificationVal);
+			    HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+			}
+		}
+	}
+}
+
+void Task4 (void* para)
+{
+	uint32_t noTificationVal;
+	vTaskDelay(10000);
+	while(1)
+	{
+		if(xTaskNotifyWait(	0,
+							0xFFFFFFFF,
+							&noTificationVal,
+							portMAX_DELAY))
+		{
+			if(noTificationVal != 0)
+			{
+				sprintf((char*)data, "Notiy 4- Val=%d\r\n", (int)noTificationVal);
+				HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+			}
+		}
+	}
+}
+
+//void Task5 (void* para)
+//{
+//
+//}
+
+
+void FreeRTOSTestFun(uint8_t val)
+{
+
+	 if(xTaskCreate(monitorTask,
+	  			"SampleTask",
+	  			STACK_SIZE,
+	  			(uint8_t *)&Tasknum,
+	  			tskIDLE_PRIORITY + 3,
+	  			&task1Handle) == pdFAIL)
+	  	{
+	  	// Task created
+	  		while(1);
+	  	}
+
+	    Tasknum = 10;
+	  	if(xTaskCreate(Task2,
+	  				"Task2",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 2,
+	  				&task1Handle2) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+
+	  	Tasknum = 20;
+	  	if(xTaskCreate(Task3,
+	  				"Task3",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 1,
+	  				&task1Handle3) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+
+	  	if(xTaskCreate(Task4,
+	  		  				"Task4",
+	  		  				STACK_SIZE,
+	  						(uint8_t *)&Tasknum,
+	  		  				tskIDLE_PRIORITY + 1,
+	  		  				&task1Handle4) == pdFAIL)
+		{
+			while(1);
+		}
+
+//	  	if(xTaskCreate(Task5,
+//	  		  				"Task5",
+//	  		  				STACK_SIZE,
+//	  						(uint8_t *)&Tasknum,
+//	  		  				tskIDLE_PRIORITY + 1,
+//	  		  				&task1Handle5) == pdFAIL)
+//		{
+//			while(1);
+//		}
+
+	  	vTaskStartScheduler();
+}
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    // Trigger a breakpoint or reset the system here
+    while (1) {
+		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+			//Delay_ms(1000);
+	}
+}
+
+#if (configUSE_IDLE_HOOK == 1)
+void vApplicationIdleHook(void) {
+    // This runs whenever no other task is ready to run
+    // Enter Sleep Mode
+    //__WFI();
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
+#endif
+
+void vApplicationMallocFailedHook(void)
+{
+    while(1)
+    {
+        /* Memory exhausted */
+    	while(1);
+    }
+}

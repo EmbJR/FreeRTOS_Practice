@@ -32,16 +32,20 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 #include "FreeRTOS.h"                   // ARM.FreeRTOS::RTOS:Core
 #include "task.h"                       // ARM.FreeRTOS::RTOS:Core
 #include "event_groups.h"               // ARM.FreeRTOS::RTOS:Event Groups
 #include "semphr.h"                     // ARM.FreeRTOS::RTOS:Cor
 #include "queue.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+extern UART_HandleTypeDef huart3;
+void FreeRTOSTestFun(uint8_t val);
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
