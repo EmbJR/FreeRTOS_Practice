@@ -1,0 +1,292 @@
+/*
+ * Returns:
+---- Please unfold the text before reading
+The number of bytes read from the stream buffer. This will be the number of bytes available up to a maximum of xBufferLengthBytes. For example:
+
+If the trigger level is 1 (the trigger level is set when the stream buffer is created) -
+
+If xBufferLengthBytes is 10 and the stream buffer contains 5 bytes when xStreamBufferReceive() is called - then xStreamBufferReceive() will not block, read 5 bytes from the buffer, and return 5.
+
+If xBufferLengthBytes is 10 and the stream buffer contains 50 bytes when xStreamBufferReceive() is called - then xStreamBufferReceive() will not block, read 10 bytes from the buffer, and return 10.
+
+If xBufferLengthBytes is 10, the stream buffer contains 0 bytes when xStreamBufferReceive() is called, xTicksToWait is 100, and 5 bytes are received into the buffer after 50 ticks - then xStreamBufferReceive() will enter the blocked state for 50 ticks (which is until data arrives in the buffer), after which it will read 5 bytes from the buffer, and return 5.
+
+If xBufferLengthBytes is 10, the stream buffer contains 0 bytes when xStreamBufferReceive() is called, xTicksToWait is 100, and no bytes are received into the buffer within 100 ticks - then xStreamBufferReceive() will enter the blocked state for the full block time of 100 ticks, after which it will return 0.
+
+If the trigger level is 6 -
+
+If xBufferLengthBytes is 10, the stream buffer contains 0 bytes when xStreamBufferReceive() is called, xTicksToWait is 100, and 10 bytes are received into the buffer after 50 ticks - then xStreamBufferReceive() will enter the blocked state for 50 ticks (which is until at least the trigger level number of bytes arrives in the buffer), after which it will read 10 bytes from the buffer, and return 10.
+
+If xBufferLengthBytes is 10, the stream buffer contains 0 bytes when xStreamBufferReceive() is called, xTicksToWait is 100, and 5 bytes are received into the buffer after 50 ticks - then xStreamBufferReceive() will remain blocked for the entire 100 tick block period (because the amount of data in the buffer never reached the trigger level), after which it will read 5 bytes from the buffer, and return 5.
+ */
+
+
+#include "main.h"
+
+uint8_t data[200] = {};
+volatile uint8_t Tasknum= 0;
+
+#define STACK_SIZE 256
+
+TaskHandle_t task1Handle;
+TaskHandle_t task1Handle2;
+TaskHandle_t task1Handle3;
+TaskHandle_t task1Handle4;
+
+StreamBufferHandle_t  sBufferHandle, xSteamBufferCustHanle;
+
+static BaseType_t prvExampleTaskHook( void * pvParameter )
+{
+    /* Perform some action - this could be anything from logging a value,
+       updating the task state, outputting a value, etc. */
+	//HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
+	uint8_t ptrdata = *(uint8_t *)pvParameter;
+
+
+    return 0;
+}
+
+void monitorTask(void *para)
+{
+	uint8_t ReceivedData1[50] = {0};
+	uint8_t ReceivedData2[50] = {0};
+	size_t xReceiveDatacnt;
+
+	vTaskDelay(5000);
+	while(1)
+	{
+//----------------------------- Receive data to Buffer 1 ------------------------------//
+		xReceiveDatacnt = xStreamBufferReceive(	sBufferHandle,
+												(void *)ReceivedData1,
+												sizeof(ReceivedData1),
+												pdMS_TO_TICKS(100));
+		if(xReceiveDatacnt > 0 )
+		{
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)ReceivedData1, strlen((const char *)ReceivedData1));
+			vTaskDelay(100); // required to give some time for printing.
+
+			/*-------- After ~3 receive, delete the buffer ------------*/
+			//vStreamBufferDelete();
+			memset((char *)ReceivedData1, 0x00, sizeof(ReceivedData1));
+		}
+//----------------------------- Receive data to Buffer 2 ------------------------------//
+		xReceiveDatacnt = xStreamBufferReceive(	xSteamBufferCustHanle,
+												(void *)ReceivedData2,
+												sizeof(ReceivedData2),
+												pdMS_TO_TICKS(100));
+		if(xReceiveDatacnt > 0 )
+		{
+			HAL_UART_Transmit_IT(&huart3, (const uint8_t *)ReceivedData2, strlen((const char *)ReceivedData2));
+			vTaskDelay(100); // required to give some time for printing.
+
+			/*-------- After ~3 receive, delete the buffer ------------*/
+			//vStreamBufferDelete();
+			memset((char *)ReceivedData2, 0x00, sizeof(ReceivedData2));
+		}
+
+	}
+}
+
+
+void Task2 (void* para)
+{
+	size_t xStreamBufferSent;
+	uint8_t DataValue1[] = {'0', '1', '2', '3', '4'};
+	uint8_t *DataValue2 = "String to send123456";
+	uint8_t cnt = 0;
+
+	while(1)
+	{
+//----------------------------- Send data to Buffer 1 ------------------------------//
+		xStreamBufferSent = xStreamBufferSend(	sBufferHandle,
+												DataValue1,
+												sizeof(DataValue1),
+												pdMS_TO_TICKS(100));
+		if(xStreamBufferSent != sizeof(DataValue1))
+		{
+			/*The call to xStreamBufferSend() times out before there was enough
+	           space in the buffer for the data to be written, but it did
+	           successfully write xStreamBufferSent bytes*/
+			vTaskDelay(10);
+		}
+//----------------------------- Send data to Buffer 2 ------------------------------//
+		if(xStreamBufferIsFull(xSteamBufferCustHanle) != pdTRUE)
+		{
+			xStreamBufferSent = xStreamBufferSend(	xSteamBufferCustHanle,
+													DataValue2,
+													strlen(DataValue2),
+													pdMS_TO_TICKS(100));
+			if(xStreamBufferSent != sizeof(DataValue2))
+			{
+				/*The call to xStreamBufferSend() times out before there was enough
+				   space in the buffer for the data to be written, but it did
+				   successfully write xStreamBufferSent bytes*/
+				vTaskDelay(10);
+			}
+		}
+
+//		xStreamBufferSent = xStreamBufferSend(	sBufferHandle,
+//												DataValue2,
+//												strlen((const char *)DataValue2),
+//												pdMS_TO_TICKS(100));
+//		if(xStreamBufferSent != strlen((const char *)DataValue2))
+//		{
+//			/*The entire string could not be added to the stream buffer because
+//           there was not enough free space in the buffer, but xStreamBufferSent bytes
+//           were sent. Could try again to send the remaining bytes.*/
+//			vTaskDelay(10);
+//		}
+
+
+		vTaskDelay(4000);
+	}
+}
+
+void Task3 (void* para)
+{
+	while(1)
+	{
+		vTaskDelay(1800);
+	}
+}
+
+void Task4 (void* para)
+{
+	while(1)
+	{
+		vTaskDelay(1000);
+	}
+}
+
+//void Task5 (void* para)
+//{
+//
+//}
+
+void vSendCallbackFunction(	StreamBufferHandle_t  xHandle,
+						 	BaseType_t isInISR,
+							BaseType_t * const xHighPriorityTaskWoken)
+{
+	vTaskDelay(10);
+}
+
+void vReceiveCallbackFunction(	StreamBufferHandle_t  xHandle,
+						 		BaseType_t isInISR,
+								BaseType_t * const xHighPriorityTaskWoken)
+{
+	vTaskDelay(10);
+}
+
+
+void FreeRTOSTestFun(uint8_t val)
+{
+
+	const size_t xStreamBuffSize = 100, xStreamBuffTrgLvl = 10;
+
+	sBufferHandle = xStreamBufferCreate(xStreamBuffSize, xStreamBuffTrgLvl);
+	if(sBufferHandle == NULL)
+	{
+		// error Creating Stream Buffer
+	}
+	xSteamBufferCustHanle = xStreamBufferCreateWithCallback(xStreamBuffSize,
+															xStreamBuffTrgLvl,
+															vSendCallbackFunction,
+															vReceiveCallbackFunction );
+
+	//----------------------------- Resets the Bufer Levels of "xSteamBufferCustHanle" ------------------------------//
+	if(xStreamBufferSetTriggerLevel(xSteamBufferCustHanle, 20) != pdPASS)
+	{
+		vTaskDelay(10);
+	}
+	//----------------------------- Check for the idle condition and delete the "xSteamBufferCustHanle" ------------------------------//
+	size_t availableSpace2 = xStreamBufferSpacesAvailable(xSteamBufferCustHanle);
+	size_t availableBytes = xStreamBufferBytesAvailable(xSteamBufferCustHanle);
+	if(availableBytes == 0 && availableSpace2 == 100)
+	{
+		//--------------------------- This will delete the bufer, Don't enable it to use "xSteamBufferCustHanle" ---------------------//
+		//-- A stream buffer can only be delete/reset if there are no tasks blocked waiting to either send to or receive from the stream buffer.//
+		//vStreamBufferDelete(xSteamBufferCustHanle);
+	}
+
+	 if(xTaskCreate(monitorTask,
+	  			"SampleTask",
+	  			STACK_SIZE,
+	  			(uint8_t *)&Tasknum,
+	  			tskIDLE_PRIORITY + 3,
+	  			&task1Handle) == pdFAIL)
+	  	{
+	  	// Task created
+	  		while(1);
+	  	}
+
+	    Tasknum = 10;
+	  	if(xTaskCreate(Task2,
+	  				"Task2",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 2,
+	  				&task1Handle2) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+
+	  	Tasknum = 20;
+	  	if(xTaskCreate(Task3,
+	  				"Task3",
+	  				STACK_SIZE,
+					(uint8_t *)&Tasknum,
+	  				tskIDLE_PRIORITY + 1,
+	  				&task1Handle3) == pdFAIL)
+	  	{
+	  		while(1);
+	  	}
+
+	  	if(xTaskCreate(Task4,
+	  		  				"Task4",
+	  		  				STACK_SIZE,
+	  						(uint8_t *)&Tasknum,
+	  		  				tskIDLE_PRIORITY + 1,
+	  		  				&task1Handle4) == pdFAIL)
+		{
+			while(1);
+		}
+
+//	  	if(xTaskCreate(Task5,
+//	  		  				"Task5",
+//	  		  				STACK_SIZE,
+//	  						(uint8_t *)&Tasknum,
+//	  		  				tskIDLE_PRIORITY + 1,
+//	  		  				&task1Handle5) == pdFAIL)
+//		{
+//			while(1);
+//		}
+
+	  	vTaskStartScheduler();
+}
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    // Trigger a breakpoint or reset the system here
+    while (1) {
+		//GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+			//Delay_ms(1000);
+	}
+}
+
+#if (configUSE_IDLE_HOOK == 1)
+void vApplicationIdleHook(void) {
+    // This runs whenever no other task is ready to run
+    // Enter Sleep Mode
+    //__WFI();
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
+#endif
+
+void vApplicationMallocFailedHook(void)
+{
+    while(1)
+    {
+        /* Memory exhausted */
+    	while(1);
+    }
+}

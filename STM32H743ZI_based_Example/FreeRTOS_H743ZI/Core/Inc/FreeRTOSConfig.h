@@ -44,6 +44,8 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
 #define configTASK_NOTIFICATION_ARRAY_ENTRIES	8
 #define configUSE_QUEUE_SETS 			1
 
+#define configUSE_SB_COMPLETED_CALLBACK	1
+
 
 #define INCLUDE_xTaskDelayUntil         1
 #define INCLUDE_vTaskDelay              1

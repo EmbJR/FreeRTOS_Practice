@@ -39,6 +39,8 @@ extern "C" {
 #include "event_groups.h"               // ARM.FreeRTOS::RTOS:Event Groups
 #include "semphr.h"                     // ARM.FreeRTOS::RTOS:Cor
 #include "queue.h"
+#include "stream_buffer.h"
+#include "message_buffer.h"
 
 /* USER CODE END Includes */
 

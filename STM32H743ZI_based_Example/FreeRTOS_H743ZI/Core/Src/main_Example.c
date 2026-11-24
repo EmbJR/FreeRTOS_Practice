@@ -10,53 +10,6 @@ TaskHandle_t task1Handle2;
 TaskHandle_t task1Handle3;
 TaskHandle_t task1Handle4;
 
-//__attribute__((aligned(4)))
-struct  __attribute__((aligned(4))) Adata  {
-	uint8_t ucMessageID;
-	uint8_t ucMessageData[10];
-};
-
-struct  __attribute__((aligned(4))) AdataComb {
-	struct Adata val[5];
-};
-
-struct AdataComb strData = {
-		.val[0] = {
-					.ucMessageID = 12,
-					.ucMessageData = "1Step123\r"
-				},
-		.val[1] = {
-					.ucMessageID = 13,
-					.ucMessageData = "2Step123\r"
-				},
-		.val[2] = {
-					.ucMessageID = 14,
-					.ucMessageData = "3Step123\r"
-				},
-		.val[3] = {
-					.ucMessageID = 15,
-					.ucMessageData = "4Step123\r"
-				},
-		.val[4] = {
-					.ucMessageID = 16,
-					.ucMessageData = "5Step123\r"
-				},
-
-};
-
-#define QUEUE1SIZE_T	10
-#define QUEUE2SIZE_T	10
-QueueHandle_t xQueueHandle1;
-QueueHandle_t xQueueHandle2;
-
-#define BINARY_SEMAPHORE_LENGTH	1
-QueueHandle_t semHandle;
-
-#define QUEUESET_1_SIZE	(QUEUE1SIZE_T + QUEUE2SIZE_T + BINARY_SEMAPHORE_LENGTH )
-QueueSetHandle_t xQueueSet_1;
-
-
-
 static BaseType_t prvExampleTaskHook( void * pvParameter )
 {
     /* Perform some action - this could be anything from logging a value,
@@ -70,96 +23,36 @@ static BaseType_t prvExampleTaskHook( void * pvParameter )
 
 void monitorTask(void *para)
 {
-	struct Adata valData;
-	QueueSetMemberHandle_t xQueueSetMember_1;
 
 	while(1)
 	{
-		xQueueSetMember_1 = xQueueSelectFromSet(xQueueSet_1, portMAX_DELAY);
-		if((xQueueSetMember_1 == xQueueHandle1) || (xQueueSetMember_1 == xQueueHandle2) || (xQueueSetMember_1 == semHandle))
-		{
-			if(xQueueSetMember_1 == xQueueHandle1)
-			{
-				if(xQueueReceive(xQueueHandle1, (struct Adata *)&valData, pdMS_TO_TICKS(10)) == pdPASS)
-				{
-					memset(data, 0x00, sizeof(data));
-					sprintf((char*)data, "valDataID = %d,\
-										\r valData = %s\r\n", (int)valData.ucMessageID, (char *)&valData.ucMessageData);
-					HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
-				}
-			}
-			else if(xQueueSetMember_1 == xQueueHandle2)
-			{
-				memset(data, 0x00, sizeof(data));
-				if(xQueueReceive(xQueueHandle2, &data, pdMS_TO_TICKS(10)) == pdPASS)
-				{
-					HAL_UART_Transmit_IT(&huart3, (const uint8_t *)data, strlen((const char *)data));
-				}
-			}
-			else if(xQueueSetMember_1 == semHandle)
-			{
-				if(xSemaphoreTake(semHandle, pdMS_TO_TICKS(10)) == pdPASS)
-				{
-					memset(data, 0x00, sizeof(data));
-					HAL_UART_Transmit_IT(&huart3, (const uint8_t *)"Semaphore Fired\r\n", strlen((const char *)"Semaphore Fired\r\n"));
-				}
-			}
-			vTaskDelay(100);
-		}
-//		if(xQueuePeek(xQueueHandle1, &valData, portMAX_DELAY) == pdPASS)
-//				{
-//					if(xQueueReceive(xQueueHandle1, &valData, portMAX_DELAY) == pdPASS)
-//					{
-//		sprintf((char*)data, "valDataID = %d,\
-//							\r valData = %s\r\n", (int)valData.ucMessageID, (char *)&valData.ucMessageData);
-//					}
-//				}
+
 	}
 }
 
 
 void Task2 (void* para)
 {
-
 	uint8_t cnt = 0;
 	while(1)
 	{
-		vTaskDelay(2500);
-		if(cnt > 4)
-		{
-			cnt = 0;
-		}
-		if(xQueueSend(xQueueHandle1, (void *)&strData.val[cnt++], portMAX_DELAY) != pdPASS)
-		{
-			// error sending Queue
-			vTaskDelay(100);
-		}
+
 	}
 }
 
 void Task3 (void* para)
 {
-	uint8_t DataTemp[100] = {0};
-	uint32_t value = 0;
 	while(1)
 	{
 		vTaskDelay(1800);
-		sprintf((char*)DataTemp, "Pressure = %d\r\n", (int)value++);
-		if(xQueueSend(xQueueHandle2, (void *)DataTemp, portMAX_DELAY) != pdPASS)
-		{
-			// error sending Queue
-			vTaskDelay(100);
-		}
 	}
 }
 
 void Task4 (void* para)
 {
-
 	while(1)
 	{
 		vTaskDelay(1000);
-		xSemaphoreGive(semHandle);
 	}
 }
 
@@ -171,33 +64,6 @@ void Task4 (void* para)
 
 void FreeRTOSTestFun(uint8_t val)
 {
-
-	uint8_t datasize1 = sizeof(struct Adata);
-	uint8_t datasize2 = sizeof(struct AdataComb);
-	(void)datasize1;
-	(void)datasize2;
-
-	xQueueHandle1 = xQueueCreate(QUEUE1SIZE_T, sizeof(struct Adata));
-	if(xQueueHandle1 == NULL)
-	{
-		// Queue creation error.
-		vTaskDelay(1000);
-	}
-
-	xQueueHandle2 = xQueueCreate(QUEUE2SIZE_T, (30*sizeof(uint8_t)));
-	if(xQueueHandle2 == NULL)
-	{
-		// Queue creation error.
-		vTaskDelay(1000);
-	}
-
-	semHandle = xSemaphoreCreateBinary();
-
-	xQueueSet_1 = xQueueCreateSet(QUEUESET_1_SIZE);
-
-	xQueueAddToSet(xQueueHandle1, xQueueSet_1);
-	xQueueAddToSet(xQueueHandle2, xQueueSet_1);
-	xQueueAddToSet(semHandle, xQueueSet_1);
 
 
 	 if(xTaskCreate(monitorTask,
